@@ -1855,12 +1855,43 @@ body.capcut-app-body {
   flex: 1 1 0;
   min-height: 200px;
   display: grid;
-  grid-template-columns: 290px minmax(0, 1fr) 310px;
-  gap: 4px;
+  grid-template-columns: var(--left-dock-width, 290px) 6px minmax(0, 1fr) 6px var(--right-dock-width, 310px);
+  gap: 0;
   padding: 4px 6px;
   background: #0e0f12;
   overflow: hidden;
   box-sizing: border-box;
+}
+
+.capcut-column-splitter {
+  width: 6px;
+  cursor: col-resize;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  z-index: 20;
+  transition: background 0.15s ease;
+}
+
+.capcut-column-splitter::after {
+  content: "";
+  width: 2px;
+  height: 44px;
+  background: #2a2d38;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.capcut-column-splitter:hover, .capcut-column-splitter.dragging {
+  background: rgba(0, 194, 255, 0.15);
+}
+
+.capcut-column-splitter:hover::after, .capcut-column-splitter.dragging::after {
+  background: #00c2ff;
+  box-shadow: 0 0 8px #00c2ff;
+  height: 80px;
 }
 
 .capcut-panel {
@@ -1871,6 +1902,25 @@ body.capcut-app-body {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  height: 100%;
+}
+
+.capcut-player-bay {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #111216;
+}
+
+.capcut-media-dock, .capcut-inspector-dock {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .capcut-panel-header {

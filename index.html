@@ -5,7 +5,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>NeonClipping Pro · Studio Video Editor</title>
-  <link rel="stylesheet" href="/assets/style.css?v=20261122-capcut1">
+  <link rel="stylesheet" href="/assets/style.css?v=20261122-capcut2">
 </head>
 <body class="capcut-app-body">
 
@@ -423,6 +423,9 @@
           </div>
         </section>
 
+        <!-- COLUMN RESIZER: MEDIA vs PLAYER -->
+        <div class="capcut-column-splitter" id="col-splitter-left" title="Drag left/right to resize Media &amp; Player panels"></div>
+
         <!-- -------------------------------------------------------------------
              PANE 2 (TOP CENTER): VIDEO PLAYER / MONITORS VIEWPORT
              ------------------------------------------------------------------- -->
@@ -556,6 +559,9 @@
           </div>
 
         </section>
+
+        <!-- COLUMN RESIZER: PLAYER vs INSPECTOR -->
+        <div class="capcut-column-splitter" id="col-splitter-right" title="Drag left/right to resize Player &amp; Inspector panels"></div>
 
         <!-- -------------------------------------------------------------------
              PANE 3 (TOP RIGHT): DETAILS / INSPECTOR ("SELECT TO EDIT")
@@ -1493,20 +1499,33 @@
       window.dispatchEvent(new Event('resize'));
     });
 
-    // Program monitor width splitter
+    // 9. Interactive Source & Program Monitor Resizing (Width & Height)
+    const srcCorner = document.getElementById('source-corner-resizer');
+    const progCorner = document.getElementById('program-corner-resizer');
+    const srcExpandBtn = document.getElementById('source-expand-btn');
+    const progExpandBtn = document.getElementById('program-expand-btn');
+    const fitBottomBtn = document.getElementById('fit-bottom-btn');
+    const previewPinBtn = document.getElementById('preview-pin-btn');
+    const colSplitterLeft = document.getElementById('col-splitter-left');
+    const colSplitterRight = document.getElementById('col-splitter-right');
+
+    function setProgWidth(w, save = true) {
+      w = Math.max(160, Math.min(850, Math.round(w)));
+      if(progBox) {
+        progBox.style.width = w + 'px';
+        progBox.style.flex = '0 0 ' + w + 'px';
+      }
+      if(save) { try { localStorage.setItem('neonclipping_program_width', w); } catch(e){} }
+      window.dispatchEvent(new Event('resize'));
+    }
+
+    const initW = Number(localStorage.getItem('neonclipping_program_width')) || 300;
+    setProgWidth(initW, false);
+
+    // Vertical Splitter between Source & Program Monitor
     if (vSplitter && progBox) {
       let isDraggingV = false;
       let startX = 0, startW = 300;
-
-      function setProgWidth(w, save = true) {
-        w = Math.max(180, Math.min(800, Math.round(w)));
-        if(progBox) progBox.style.width = w + 'px';
-        if(save) { try { localStorage.setItem('neonclipping_program_width', w); } catch(e){} }
-        window.dispatchEvent(new Event('resize'));
-      }
-
-      const initW = Number(localStorage.getItem('neonclipping_program_width')) || 300;
-      setProgWidth(initW, false);
 
       vSplitter.addEventListener('mousedown', e => {
         isDraggingV = true;
@@ -1519,6 +1538,8 @@
 
       window.addEventListener('mousemove', e => {
         if (!isDraggingV) return;
+        // Dragging left makes program monitor wider (source narrower)
+        // Dragging right makes program monitor narrower (source wider)
         const dx = startX - e.clientX;
         setProgWidth(startW + dx);
       });
@@ -1528,6 +1549,224 @@
           isDraggingV = false;
           document.body.style.cursor = '';
           vSplitter.classList.remove('dragging');
+        }
+      });
+    }
+
+    // Source Monitor Corner Resizer (2D Width & Height Drag)
+    if (srcCorner && srcBox) {
+      let isDraggingCorner = false;
+      let startX = 0, startY = 0;
+      let startProgW = 300, startTimelineH = 340;
+
+      srcCorner.addEventListener('mousedown', e => {
+        isDraggingCorner = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startProgW = progBox ? progBox.getBoundingClientRect().width : 300;
+        startTimelineH = timelineDeck ? timelineDeck.getBoundingClientRect().height : 340;
+        document.body.style.cursor = 'nwse-resize';
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', e => {
+        if (!isDraggingCorner) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        // 1. Width adjustment: Dragging right increases source monitor width by shrinking program monitor
+        if (progBox && progBox.style.display !== 'none') {
+          const newProgW = Math.max(160, Math.min(800, startProgW - dx));
+          setProgWidth(newProgW);
+        }
+
+        // 2. Height adjustment: Dragging down increases monitor height by shrinking timeline
+        if (timelineDeck) {
+          setTimelineHeight(startTimelineH - dy);
+        }
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDraggingCorner) {
+          isDraggingCorner = false;
+          document.body.style.cursor = '';
+          window.dispatchEvent(new Event('resize'));
+        }
+      });
+    }
+
+    // Program Monitor Corner Resizer (2D Width & Height Drag)
+    if (progCorner && progBox) {
+      let isDraggingCornerP = false;
+      let startX = 0, startY = 0, startW = 300, startTimelineH = 340;
+
+      progCorner.addEventListener('mousedown', e => {
+        isDraggingCornerP = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startW = progBox.getBoundingClientRect().width;
+        startTimelineH = timelineDeck ? timelineDeck.getBoundingClientRect().height : 340;
+        document.body.style.cursor = 'nwse-resize';
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', e => {
+        if (!isDraggingCornerP) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        setProgWidth(startW + dx);
+        if (timelineDeck) {
+          setTimelineHeight(startTimelineH - dy);
+        }
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDraggingCornerP) {
+          isDraggingCornerP = false;
+          document.body.style.cursor = '';
+          window.dispatchEvent(new Event('resize'));
+        }
+      });
+    }
+
+    // Source Expand / Maximize Toggle Button
+    let isSrcMaximized = false;
+    srcExpandBtn?.addEventListener('click', () => {
+      isSrcMaximized = !isSrcMaximized;
+      if (isSrcMaximized) {
+        setPlayerViewMode('source');
+        if (timelineDeck && !timelineDeck.classList.contains('collapsed')) {
+          timelineDeck.classList.add('collapsed');
+          if (toggleTimelineBtn) toggleTimelineBtn.classList.add('active');
+        }
+        srcExpandBtn.classList.add('active');
+        srcExpandBtn.textContent = '⛶ Normal';
+      } else {
+        setPlayerViewMode('dual');
+        if (timelineDeck && timelineDeck.classList.contains('collapsed')) {
+          timelineDeck.classList.remove('collapsed');
+          if (toggleTimelineBtn) toggleTimelineBtn.classList.remove('active');
+        }
+        set5050Split(true);
+        srcExpandBtn.classList.remove('active');
+        srcExpandBtn.textContent = '⛶ Expand';
+      }
+      window.dispatchEvent(new Event('resize'));
+    });
+
+    // Program Expand Button
+    progExpandBtn?.addEventListener('click', () => {
+      if (!progBox) return;
+      const curW = progBox.getBoundingClientRect().width;
+      const targetW = curW > 350 ? 240 : 480;
+      setProgWidth(targetW);
+    });
+
+    // Fit Bottom (Maximize Monitor Height) Button
+    fitBottomBtn?.addEventListener('click', () => {
+      if (timelineDeck && !timelineDeck.classList.contains('collapsed')) {
+        timelineDeck.classList.add('collapsed');
+        if (toggleTimelineBtn) toggleTimelineBtn.classList.add('active');
+        fitBottomBtn.classList.add('active');
+        fitBottomBtn.textContent = '↕ 50/50';
+      } else {
+        if (timelineDeck) timelineDeck.classList.remove('collapsed');
+        if (toggleTimelineBtn) toggleTimelineBtn.classList.remove('active');
+        fitBottomBtn.classList.remove('active');
+        fitBottomBtn.textContent = '↕ Max';
+        set5050Split(true);
+      }
+      window.dispatchEvent(new Event('resize'));
+    });
+
+    // Float Program Monitor Button
+    previewPinBtn?.addEventListener('click', () => {
+      if (!progBox) return;
+      const isFloated = progBox.classList.toggle('floating');
+      previewPinBtn.classList.toggle('active', isFloated);
+      previewPinBtn.textContent = isFloated ? '📌 Pinned' : '📌 Float';
+      window.dispatchEvent(new Event('resize'));
+    });
+
+    // 10. Column Resizers: Media vs Player vs Inspector
+    const topSection = document.getElementById('capcut-top-section');
+    function setColWidths(leftW, rightW, save = true) {
+      if (!topSection) return;
+      leftW = Math.max(220, Math.min(480, Math.round(leftW)));
+      rightW = Math.max(240, Math.min(500, Math.round(rightW)));
+      topSection.style.gridTemplateColumns = `${leftW}px 6px minmax(0, 1fr) 6px ${rightW}px`;
+      if (save) {
+        try {
+          localStorage.setItem('capcut_col_left', leftW);
+          localStorage.setItem('capcut_col_right', rightW);
+        } catch(e){}
+      }
+      window.dispatchEvent(new Event('resize'));
+    }
+
+    const savedLeftW = Number(localStorage.getItem('capcut_col_left')) || 290;
+    const savedRightW = Number(localStorage.getItem('capcut_col_right')) || 310;
+    setColWidths(savedLeftW, savedRightW, false);
+
+    // Left Column Splitter (Media vs Player)
+    if (colSplitterLeft && topSection) {
+      let isDraggingColL = false;
+      let startX = 0, startLeftW = 290;
+
+      colSplitterLeft.addEventListener('mousedown', e => {
+        isDraggingColL = true;
+        startX = e.clientX;
+        const currentCols = getComputedStyle(topSection).gridTemplateColumns.split(' ');
+        startLeftW = parseFloat(currentCols[0]) || 290;
+        document.body.style.cursor = 'col-resize';
+        colSplitterLeft.classList.add('dragging');
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', e => {
+        if (!isDraggingColL) return;
+        const dx = e.clientX - startX;
+        const curRightW = Number(localStorage.getItem('capcut_col_right')) || 310;
+        setColWidths(startLeftW + dx, curRightW);
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDraggingColL) {
+          isDraggingColL = false;
+          document.body.style.cursor = '';
+          colSplitterLeft.classList.remove('dragging');
+        }
+      });
+    }
+
+    // Right Column Splitter (Player vs Inspector)
+    if (colSplitterRight && topSection) {
+      let isDraggingColR = false;
+      let startX = 0, startRightW = 310;
+
+      colSplitterRight.addEventListener('mousedown', e => {
+        isDraggingColR = true;
+        startX = e.clientX;
+        const currentCols = getComputedStyle(topSection).gridTemplateColumns.split(' ');
+        startRightW = parseFloat(currentCols[currentCols.length - 1]) || 310;
+        document.body.style.cursor = 'col-resize';
+        colSplitterRight.classList.add('dragging');
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', e => {
+        if (!isDraggingColR) return;
+        // Dragging left makes inspector wider; dragging right makes player wider
+        const dx = startX - e.clientX;
+        const curLeftW = Number(localStorage.getItem('capcut_col_left')) || 290;
+        setColWidths(curLeftW, startRightW + dx);
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDraggingColR) {
+          isDraggingColR = false;
+          document.body.style.cursor = '';
+          colSplitterRight.classList.remove('dragging');
         }
       });
     }
