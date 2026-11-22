@@ -1,59 +1,1566 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="color-scheme" content="dark"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NeonClipping</title><link rel="stylesheet" href="/assets/style.css?v=20261121-src8"></head><body>
-<aside class="sidebar"><a class="brand" href="/">N↗ <div>NEONCLIPPING<small>OPEN-SOURCE CLIP ENGINE</small></div></a><div class="nav-label">WORKSPACE</div><button class="nav active" data-view="editor">◫ &nbsp; Create clips</button><button class="nav" data-view="library">▦ &nbsp; My clips <span id="library-count">0</span></button><button class="side-report" id="report-side" type="button">⚑ Report a problem<small>समस्या बताएँ · opens a safe, private report</small></button><div class="side-supporters" id="supporters" hidden><div class="nav-label">SUPPORTERS</div><div id="supporters-list" class="supporters-list"></div></div><div class="side-note">● Your machine. Your clips.<p>Independent local processing.<br>No clipping subscription.</p></div><div class="signature">BUILT FOR THE NEXT HIGHLIGHT.<small>by <a href="https://www.instagram.com/iamajmeena/" target="_blank" rel="noopener" style="color:inherit">Ajay K Meena</a> · <a href="https://github.com/iamajmeena/neonclipping" target="_blank" rel="noopener" style="color:inherit">open-source</a></small></div></aside>
-<main><header><div class="eyebrow">THE CLIP STARTS HERE</div><div class="top"><h1>Long video. <em>Big moments.</em></h1><span class="social"><a class="gh" href="https://github.com/iamajmeena/neonclipping" target="_blank" rel="noopener">★ Star on GitHub · trending this week</a><a class="ig" href="https://www.instagram.com/iamajmeena/" target="_blank" rel="noopener">Follow @iamajmeena</a><button class="don" id="donate" hidden>♥ Support development</button></span><dialog id="donate-dialog"><b>Help us keep building NeonClipping ♥</b><p>NeonClipping is free and open-source, and it will stay that way. Our developers are working hard to fix issues, speed it up and add the features you ask for. Every donation, even ₹49, goes straight into making the next version better.</p><div class="don-links"><a id="don-rzp" target="_blank" rel="noopener" hidden>Donate with UPI / cards (Razorpay)</a><a id="don-pp" target="_blank" rel="noopener" hidden>Donate with PayPal</a></div><p class="muted">Cannot donate? A ⭐ on <a href="https://github.com/iamajmeena/neonclipping" target="_blank" rel="noopener" style="color:var(--cyan)">GitHub</a> helps just as much. Thank you!</p><button id="don-close">Close</button></dialog></div><p>Paste a link. Get captioned 9:16 clips in about two minutes. Free, local, open-source.</p><div class="support-bar" id="support-bar" hidden><span><b>Free forever, built by independent developers.</b> We are working hard every day to fix issues and ship new features. If NeonClipping saves you time, a small donation (even ₹49) pays for faster fixes and a better tool for everyone.</span><span class="support-actions"><button class="don-big" id="donate-bar" type="button">♥ Donate via UPI / card</button><a class="star-big" href="https://github.com/iamajmeena/neonclipping" target="_blank" rel="noopener">★ Star it, we are climbing GitHub trending</a></span></div></header><div class="update-bar" id="update-bar" hidden><span id="update-text"></span><span class="update-actions"><button class="primary" id="update-now" type="button">Update now</button><button class="secondary" id="update-cancel" type="button" hidden>Cancel</button><label class="check"><input id="update-auto" type="checkbox" checked> Update automatically when idle</label></span></div><section id="editor-view">
-<section class="panel import-panel"><div class="section-head"><h2><span class="step">01</span> Bring your video</h2><label class="upload">↑ Upload video<input id="file" type="file" accept="video/*" hidden></label></div><div class="url-row"><input id="url" type="url" placeholder="Paste a YouTube, Twitch or Kick replay link"><label class="srcq-inline" title="How sharp the video downloaded from YouTube is. 1080p is the default; choose 4K for the sharpest source (slower, much more disk)."><span>Download quality</span><select id="srcq"><option value="1080" selected>1080p (default)</option><option value="2160">4K (slower, big file)</option><option value="1440">1440p</option><option value="720">720p (fastest)</option><option value="480">480p (saves data)</option><option value="360">360p (lowest data)</option></select></label><button class="primary" id="link">Get preview ↗</button><button class="primary make" id="make">⚡ Make clips</button></div><div class="make-row"><span class="muted">Make clips = one click: download → AI picks best moments → captioned 9:16 clips. Uses the Clips / length / layout / caption style below.</span></div><div id="make-results" hidden><div class="progress-track"><div id="make-progress"></div></div><b id="make-status"></b><div id="make-grid" class="make-grid"></div></div><div class="import-note" id="link-status" role="status">Frames arrive first. Select your areas while the full source downloads.</div><div id="range-pick" class="range-pick" hidden><b id="range-title">Long video</b><p class="muted" id="range-text"></p><div class="controls"><label>From (h:mm:ss)<input id="range-start" type="text" value="0:00:00" inputmode="numeric"></label><label>To (h:mm:ss)<input id="range-end" type="text" value="0:30:00" inputmode="numeric"></label><button class="primary" id="range-go">Import this part ↗</button></div></div><div class="progress-track" hidden id="progress-wrap"><div id="progress"></div></div><div id="frames" class="frames"></div><label class="toggle" style="margin-top:12px"><input id="auto-analyze" type="checkbox" checked> Find highlights automatically when the source is ready</label></section><details class="panel" id="queue-panel"><summary><b>Processing queue</b> · save batches for later</summary><p class="muted">Queue video links, pause waiting work, or retry an interrupted job. Running work is kept safe.</p><label>Video links, one per line<textarea id="queue-urls" rows="3" placeholder="https://www.youtube.com/watch?v=..."></textarea></label><div class="controls"><label>Start after (optional)<input id="queue-time" type="datetime-local"></label><button class="secondary" id="queue-add">Add videos to queue</button><button id="queue-pause">Pause queue</button><button id="queue-refresh">Refresh queue</button></div><div id="queue-list"></div></details>
-<details class="panel" id="ai-panel"><summary><b>🤖 Long stream? Let a free chatbot pick the moments</b> <span class="pill">NEW</span></summary>
-<p class="muted">A chatbot given a 9-hour transcript only really reads the start. So: split the transcript into small parts, paste each part into any free chatbot (Gemini, ChatGPT, Claude…), paste its answers back here, and NeonClipping downloads only those sections and makes the clips. Needs a YouTube video with captions. Nothing is sent anywhere by NeonClipping.</p>
-<div class="url-row"><input id="ai-url" type="text" placeholder="YouTube video link (a finished stream or video)"><button class="primary" id="ai-split">1 · Split into parts</button></div>
-<div class="controls"><label>Parts (blank = automatic)<input id="ai-parts" type="number" min="1" max="40" placeholder="auto"></label><label>Moments per part<input id="ai-per" type="number" min="1" max="10" value="3"></label></div>
-<div class="muted" id="ai-status"></div>
-<div id="ai-list"></div>
-<h3 style="margin-top:16px">2 · Paste the chatbot answers (all parts together is fine)</h3>
-<p class="muted" style="font-size:11px;margin-bottom:6px">💡 <b>Sirf moments / timestamps paste karein</b> (jaise ChatGPT ne diye ho: <code>12:30 - 13:10 Plane crash</code>). Poori video ka raw transcript yahan paste mat karein.</p>
-<textarea id="ai-answers" rows="6" placeholder='[{"start":"00:12:30","end":"00:13:10","title":"Plane crash","hook":"bhai plane gir gaya"}] … or lines like 12:30-13:10 Plane crash'></textarea>
-<div class="controls"><button class="secondary" id="ai-read">Read the answers</button><button class="primary" id="ai-make" disabled title="Paste chatbot answers in Step 2 and click 'Read the answers' first">3 · Make clips from these moments</button></div>
-<div id="ai-moments"></div></details>
-<section class="panel creators-panel"><div class="section-head"><h2>👥 Creators <span class="pill">NEW</span></h2><span class="muted">add a streamer once, clips start by themselves when they go live</span></div><div class="url-row"><input id="creator-url" type="text" placeholder="Twitch name (kaicenat) or Twitch / YouTube channel link (youtube.com/@name)"><button class="primary" id="creator-add">+ Add creator</button></div><div class="import-note">NeonClipping checks every minute. When a creator on your list goes live, it records the stream and clips the chat spikes with the layout, facecam boxes and caption style you had selected when you added them (press “Use my current layout” to change it later). One stream at a time. Keep NeonClipping open; unattended recordings stop after 3 hours (a new one starts if they are still live), and the big recording file is deleted after the clips are cut.</div><div id="creator-note" class="muted"></div><div id="creator-list"></div></section>
-<section class="panel live-panel"><div class="section-head"><h2>⚡ Live clipping <span class="pill">NEW</span></h2><span class="muted">clips while the stream is on</span></div><div class="url-row"><input id="live-url" type="text" placeholder="Twitch channel link or YouTube Live link"><button class="primary" id="live-start">● Start live clipping</button></div><div class="import-note">Records the stream, watches chat speed and cuts a clip around every chat spike (starting ~24 s before it). Uses your layout, facecam boxes, caption style and language from the steps below. Works only while the stream is live.</div><div id="live-box" hidden><div class="live-stats" id="live-stats"></div><div class="live-actions"><button class="secondary" id="live-now">✂ Clip the last 30 s now</button><button class="secondary" id="live-stop">■ Stop</button></div><div id="live-grid" class="make-grid"></div></div></section>
-<section class="panel"><div class="section-head"><h2><span class="step">02</span> Make it your format</h2><span class="muted">9:16 · 1080 × 1920</span></div><div class="controls"><label>Facecam enhance<select id="facecam-enhance"><option value="smart" selected>✨ Smart Clarity & Contrast</option><option value="high">🔥 Ultra Sharp</option><option value="custom">🎛 Custom Sliders</option><option value="off">Off (Original)</option></select></label><label>Meme SFX<select id="make-sfx"><option value="none" selected>None (No SFX)</option><option value="vine_boom">💥 Vine Boom</option><option value="whoosh">💨 Whoosh</option><option value="ding">🔔 Ding</option><option value="punch">🥊 Punch</option><option value="bruh">🗿 Bruh</option><option value="fail">🎺 Fail</option><option value="record_scratch">🛑 Record Scratch</option></select></label><label>Caption accuracy<select id="accurate"><option value="fast" selected>YouTube captions (default)</option><option value="best">Best Hindi: large-v3 (slow)</option></select></label><label>Mode<select id="mode"><option value="fast">⚡ Fast (~2-3 min)</option><option value="deep">🔬 Deep (slower, smarter)</option></select></label><label>Clips<input id="count" type="number" min="1" max="12" value="4"></label><label>Min length (s)<input id="minlen" type="number" min="5" max="120" value="30"></label><label>Max length (s)<input id="length" type="number" min="10" max="180" value="60"></label><button class="secondary" id="analyze">✦ Find highlights</button><span class="muted">Movement + audio activity.<br>Review each candidate.</span></div><div class="controls output-controls"><label>Output format<select id="aspect"><option value="vertical">9:16 · Shorts / Reels</option><option value="square">1:1 · Square</option><option value="portrait">4:5 · Feed</option><option value="threefour">3:4 · Portrait</option><option value="landscape">16:9 · YouTube</option></select></label><label>Resolution<select id="resolution"><option value="720">720</option><option value="1080" selected>1080</option><option value="2160">2160 · 4K</option></select></label><label title="How sharp the video downloaded from YouTube is. 1080p is the default; 4K is slower and uses much more disk.">Source quality<select id="srcq"><option value="1080" selected>1080p (default)</option><option value="2160">4K (slower)</option><option value="1440">1440p</option><option value="720">720p (fastest)</option></select></label><label>Frame rate<select id="fps"><option value="0">Keep original</option><option value="24">24 fps</option><option value="30">30 fps</option><option value="60">60 fps</option></select></label></div><div class="layout-grid" id="layouts"><button class="choice active" data-layout="stack"><span class="mini stack-mini"><i></i><i></i></span><b>Face + gameplay</b><small>Choose both areas</small></button><button class="choice" data-layout="blur"><span class="mini blur-mini"><i></i></span><b>Blurred fill</b><small>Keep the wider frame</small></button><button class="choice" data-layout="fill"><span class="mini fill-mini"><i></i></span><b>Fill screen</b><small>Bold centre crop</small></button><button class="choice" data-layout="game"><span class="mini game-mini"><i></i></span><b>Gameplay only</b><small>Use your selected area</small></button></div><div class="preset-row"><b>Facecam position</b><button class="chip" data-preset="tl">↖ Top-left</button><button class="chip" data-preset="tr">↗ Top-right</button><button class="chip" data-preset="bl">↙ Bottom-left</button><button class="chip" data-preset="br">↘ Bottom-right</button><button class="chip" data-preset="bc">⬇ Bottom-centre</button><button class="chip" data-preset="none">No facecam</button><span class="muted" id="preset-note">Pick one, or draw the boxes yourself in step 03.</span></div><div id="brainrot-panel" class="brainrot-panel" hidden style="margin-top:14px;background:#151022;padding:12px 16px;border-radius:10px;border:1px solid #30263e"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b style="color:#d4fb58;font-size:13px">🎮 Viral Split-Screen / Satisfying Background</b><div style="display:flex;gap:6px"><button type="button" id="brainrot-preview-btn" class="chip" style="cursor:pointer;padding:2px 10px;font-size:11px;background:#30263e;color:#58e8f7">▶ Preview Loop</button><label class="chip" style="cursor:pointer;padding:2px 10px;font-size:11px;background:#30263e;color:#ff4ba5">+ Upload Custom <input type="file" id="brainrot-upload-input" accept="video/*" style="display:none"></label></div></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;font-size:11px"><label>Satisfying Video Loop<select id="brainrot-bg-select" style="width:100%"><option value="subway" selected>🚇 Subway Surfers</option><option value="minecraft">🧱 Minecraft Parkour</option><option value="gta">🚗 GTA 5 Mega Ramp</option><option value="soap">🧼 Soap / Kinetic Sand</option></select></label><label>Split Ratio <span id="brainrot-val-split" style="color:#ff4ba5">50% / 50%</span><input id="brainrot-split" type="range" min="30" max="70" value="50" style="width:100%"></label><label>Top Video Source<select id="brainrot-source-select" style="width:100%"><option value="game" selected>Gameplay Area Box</option><option value="cam">Facecam Area Box</option><option value="full">Full Source Crop</option></select></label></div><div style="display:flex;gap:8px;margin-top:10px;align-items:center"><input type="text" id="brainrot-link-input" placeholder="Paste YouTube / Shorts link for viral gameplay..." style="flex:1;padding:5px 10px;font-size:11px;background:#0d0a14;border:1px solid #30263e;border-radius:6px;color:#fff"><button type="button" id="brainrot-import-btn" class="chip" style="cursor:pointer;padding:5px 12px;font-size:11px;background:#d4fb58;color:#0d0a14;font-weight:bold;white-space:nowrap">🔗 Import Link</button></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;font-size:11px;margin-top:10px;padding-top:10px;border-top:1px solid #20172e"><label>Viral Loop Position<select id="brainrot-pos-select" style="width:100%"><option value="bottom" selected>Gameplay Bottom / Streamer Top</option><option value="top">Gameplay Top / Streamer Bottom</option></select></label><label>Viral Loop Framing<select id="brainrot-crop-select" style="width:100%"><option value="center" selected>Center Fill (Zoom & Crop)</option><option value="left">Left Focus</option><option value="right">Right Focus</option><option value="fit">Fit / Contain (No crop)</option></select></label><label>Gameplay Speed<select id="brainrot-speed-select" style="width:100%"><option value="1.0" selected>1.0x (Normal)</option><option value="1.25">1.25x (Viral / Fast)</option><option value="1.5">1.5x (Hyper)</option></select></label><label>Loop Audio<select id="brainrot-vol-select" style="width:100%"><option value="0.0" selected>Muted (0%)</option><option value="0.10">Low Ambient (10%)</option><option value="0.25">Medium (25%)</option></select></label></div><div id="brainrot-status" class="muted" style="margin-top:4px;font-size:11px">Runs satisfying gameplay on bottom while your clip plays on top. Pick "Viral Split" in layouts above!</div></div></section>
-<section class="panel"><div class="section-head"><h2><span class="step">03</span> Frame your moment</h2><span class="pill" id="source-mode">NO SOURCE YET</span></div><div class="candidate-row"><select id="recent"><option>No highlights yet</option></select><button id="import">Open highlight</button></div><div class="workspace"><div class="source-side"><div class="toolbar"><button id="cam" class="active">▣ Facecam area</button><button id="game">▣ Gameplay area</button><button id="save">Save layout</button><button id="load">Load layout</button></div><div class="canvas-wrap"><canvas id="source" width="960" height="540"></canvas><div id="empty-source">Your preview frames appear here.<small>Draw the facecam and gameplay boxes directly on a frame.</small></div></div><video id="video" controls preload="metadata"></video><div class="range-row"><label>Start / sec<input id="start" type="number" value="0" min="0" step=".1"></label><label>End / sec<input id="end" type="number" value="30" min="0" step=".1"></label><label id="height-control">Face size <span id="height-value">32%</span><input id="top" type="range" min="20" max="50" value="32"></label></div><div class="facecam-filters-panel" style="margin-top:14px;background:#151022;padding:12px 14px;border-radius:10px;border:1px solid #30263e"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b style="color:#58e8f7;font-size:13px">🎨 Facecam Color &amp; Clarity Tuning (Live Preview)</b><button type="button" id="filters-reset" class="chip" style="cursor:pointer;padding:2px 8px;font-size:11px">↺ Reset</button></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;font-size:11px"><label>Contrast <span id="val-contrast" style="color:#ff4ba5">100%</span><input id="filter-contrast" type="range" min="50" max="180" value="100" style="width:100%"></label><label>Brightness <span id="val-brightness" style="color:#ff4ba5">0%</span><input id="filter-brightness" type="range" min="-40" max="40" value="0" style="width:100%"></label><label>Saturation <span id="val-saturation" style="color:#ff4ba5">100%</span><input id="filter-saturation" type="range" min="0" max="200" value="100" style="width:100%"></label><label>Clarity / Sharp <span id="val-clarity" style="color:#ff4ba5">0%</span><input id="filter-clarity" type="range" min="0" max="100" value="0" style="width:100%"></label><label>Hue / Tint <span id="val-hue" style="color:#ff4ba5">0°</span><input id="filter-hue" type="range" min="-180" max="180" value="0" style="width:100%"></label></div></div><div class="video-effects-panel" id="video-effects-panel" style="margin-top:14px;background:#151022;padding:12px 14px;border-radius:10px;border:1px solid #30263e"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="display:flex;align-items:center;gap:8px"><b style="color:#d4fb58;font-size:13px">🎬 Video Effects Studio (Combine Multiple)</b><span id="effects-active-count" class="chip" style="font-size:10px;padding:1px 7px;background:#30263e;color:#58e8f7">0 Active</span></div><button type="button" id="effects-reset" class="chip" style="cursor:pointer;padding:2px 8px;font-size:11px">↺ Reset Effects</button></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px"><div class="effect-card" style="background:#0d0a14;padding:8px 10px;border-radius:8px;border:1px solid #251e33"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label style="cursor:pointer;font-weight:bold;color:#58e8f7;font-size:12px"><input type="checkbox" id="fx-zoom-enable"> 🔍 Dynamic Zoom</label><span id="fx-val-zoom-scale" style="color:#ff4ba5;font-size:11px">1.18x</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px"><label>Where / When<select id="fx-zoom-timing" style="width:100%"><option value="hook" selected>Opening Hook (0-2s)</option><option value="peak">Peak / Loud Climax</option><option value="custom">Custom Timing</option></select></label><label>Zoom Scale<input id="fx-zoom-scale" type="range" min="105" max="135" value="118" style="width:100%"></label></div><div id="fx-zoom-custom-row" style="display:none;grid-template-columns:1fr 1fr;gap:6px;font-size:10px;margin-top:4px"><label>Start (s)<input type="number" id="fx-zoom-start" value="0.0" min="0" step="0.1" style="width:100%"></label><label>End (s)<input type="number" id="fx-zoom-end" value="2.0" min="0" step="0.1" style="width:100%"></label></div></div><div class="effect-card" style="background:#0d0a14;padding:8px 10px;border-radius:8px;border:1px solid #251e33"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label style="cursor:pointer;font-weight:bold;color:#58e8f7;font-size:12px"><input type="checkbox" id="fx-shake-enable"> ⚡ Screen Shake</label><span id="fx-val-shake" style="color:#ff4ba5;font-size:11px">Medium</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px"><label>Where / When<select id="fx-shake-timing" style="width:100%"><option value="peak" selected>Climax / Loud Peak</option><option value="hook">Opening Hook</option><option value="custom">Custom Timing</option></select></label><label>Intensity<select id="fx-shake-intensity" style="width:100%"><option value="low">Subtle</option><option value="med" selected>Medium</option><option value="high">Heavy Quake</option></select></label></div><div id="fx-shake-custom-row" style="display:none;grid-template-columns:1fr 1fr;gap:6px;font-size:10px;margin-top:4px"><label>Start (s)<input type="number" id="fx-shake-start" value="1.5" min="0" step="0.1" style="width:100%"></label><label>End (s)<input type="number" id="fx-shake-end" value="2.5" min="0" step="0.1" style="width:100%"></label></div></div><div class="effect-card" style="background:#0d0a14;padding:8px 10px;border-radius:8px;border:1px solid #251e33"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label style="cursor:pointer;font-weight:bold;color:#58e8f7;font-size:12px"><input type="checkbox" id="fx-flash-enable"> 💥 Climax Flash</label><span id="fx-val-flash" style="color:#ff4ba5;font-size:11px">60%</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px"><label>Where / When<select id="fx-flash-timing" style="width:100%"><option value="peak" selected>Climax / Loud Peak</option><option value="start">At Clip Start (0s)</option><option value="custom">Custom Timestamp</option></select></label><label>Brightness<input id="fx-flash-bright" type="range" min="30" max="90" value="60" style="width:100%"></label></div><div id="fx-flash-custom-row" style="display:none;font-size:10px;margin-top:4px"><label>Flash at sec: <input type="number" id="fx-flash-start" value="1.0" min="0" step="0.1" style="width:60px"></label></div></div><div class="effect-card" style="background:#0d0a14;padding:8px 10px;border-radius:8px;border:1px solid #251e33"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label style="cursor:pointer;font-weight:bold;color:#58e8f7;font-size:12px"><input type="checkbox" id="fx-glitch-enable"> 📼 VHS Glitch</label><span id="fx-val-glitch" style="color:#ff4ba5;font-size:11px">Subtle</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px"><label>Where / When<select id="fx-glitch-timing" style="width:100%"><option value="always" selected>Entire Clip (Always on)</option><option value="hook">Opening Hook only</option><option value="peak">Climax / Peak only</option><option value="custom">Custom Timing</option></select></label><label>Intensity<select id="fx-glitch-intensity" style="width:100%"><option value="subtle" selected>Subtle Scanlines</option><option value="heavy">Heavy Glitch / VHS</option></select></label></div><div id="fx-glitch-custom-row" style="display:none;grid-template-columns:1fr 1fr;gap:6px;font-size:10px;margin-top:4px"><label>Start (s)<input type="number" id="fx-glitch-start" value="0.0" min="0" step="0.1" style="width:100%"></label><label>End (s)<input type="number" id="fx-glitch-end" value="2.0" min="0" step="0.1" style="width:100%"></label></div></div><div class="effect-card" style="background:#0d0a14;padding:8px 10px;border-radius:8px;border:1px solid #251e33"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label style="cursor:pointer;font-weight:bold;color:#58e8f7;font-size:12px"><input type="checkbox" id="fx-color-enable"> 🎨 Color Preset</label><span id="fx-val-color" style="color:#ff4ba5;font-size:11px">Teal/Orange</span></div><div style="font-size:11px"><label>Preset Look<select id="fx-color-preset" style="width:100%"><option value="teal_orange" selected>🎬 Teal &amp; Orange (Cinema)</option><option value="cyberpunk">🌆 Cyberpunk Neon (Gaming)</option><option value="warm_sunset">🌅 Warm Sunset / Golden</option><option value="bw_noir">🖤 B&amp;W Noir (Dramatic)</option><option value="vibrant_pop">⚡ Vibrant HDR Pop</option></select></label></div></div><div class="effect-card" style="background:#0d0a14;padding:8px 10px;border-radius:8px;border:1px solid #251e33"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label style="cursor:pointer;font-weight:bold;color:#58e8f7;font-size:12px"><input type="checkbox" id="fx-vignette-enable"> 🌑 Cinematic Vignette</label><span id="fx-val-vignette" style="color:#ff4ba5;font-size:11px">75%</span></div><div style="font-size:11px"><label>Dark Edge Strength<input id="fx-vignette-strength" type="range" min="40" max="110" value="75" style="width:100%"></label></div></div></div></div></div><aside class="preview-side" id="preview-side"><div class="preview-header" id="preview-drag-handle" style="width:100%;display:flex;justify-content:space-between;align-items:center;cursor:grab;padding-bottom:6px"><div class="eyebrow" style="font-size:9px">YOUR VERTICAL CUT</div><div style="display:flex;gap:4px"><button type="button" id="preview-pin-btn" class="chip" title="Pin / Always float across whole page" style="padding:1px 6px;font-size:10px;cursor:pointer">📌 Float</button><button type="button" id="preview-min-btn" class="chip" title="Minimize / Expand preview" style="padding:1px 6px;font-size:10px;cursor:pointer">🗕</button></div></div><div class="preview-body" id="preview-body" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%"><canvas id="preview" width="540" height="960"></canvas><small>Layout + caption style preview</small><label class="toggle"><input id="safe-zones" type="checkbox"> Show platform safe zones</label></div></aside></div></section>
-<section class="panel"><div class="section-head"><h2><span class="step">04</span> Give it a voice</h2><label class="toggle"><input id="captions" type="checkbox" checked> Burn in subtitles</label></div><div class="caption-styles"><button class="caption-choice active gta" data-style="gta"><span>THIS IS <strong>WILD</strong></span><b>GTA Neon</b><small>Pink / cyan / electric lime</small></button><button class="caption-choice bold" data-style="bold"><span>THIS IS <strong>WILD</strong></span><b>Impact</b><small>Bold active-word highlight</small></button><button class="caption-choice hormozi" data-style="hormozi"><span>THIS IS <strong style="color:#00ffff">WILD</strong></span><b>Hormozi</b><small>White + cyan pop, thick outline</small></button><button class="caption-choice mrbeast" data-style="mrbeast"><span style="color:#ffff00">THIS IS <strong style="color:#ff6600">WILD</strong></span><b>MrBeast</b><small>Yellow + orange, huge outline</small></button><button class="caption-choice clean" data-style="clean"><span>This is wild.</span><b>Clean</b><small>Quiet, readable subtitles</small></button></div><div class="controls"><label>Spoken language<select id="language"><option value="">Auto (Hindi → Hinglish)</option><option value="hinglish">Hinglish (Hindi in English letters)</option><option value="hi">हिंदी (Devanagari)</option><option value="en">English</option><optgroup label="More languages (captions use your installed fonts)"><option value="ur">Urdu · اردو</option><option value="bn">Bengali · বাংলা</option><option value="ta">Tamil · தமிழ்</option><option value="te">Telugu · తెలుగు</option><option value="mr">Marathi · मराठी</option><option value="gu">Gujarati · ગુજરાતી</option><option value="kn">Kannada · ಕನ್ನಡ</option><option value="ml">Malayalam · മലയാളം</option><option value="pa">Punjabi · ਪੰਜਾਬੀ</option><option value="ne">Nepali · नेपाली</option><option value="si">Sinhala · සිංහල</option><option value="ar">Arabic · العربية</option><option value="fa">Persian · فارسی</option><option value="he">Hebrew · עברית</option><option value="tr">Turkish · Türkçe</option><option value="ru">Russian · Русский</option><option value="uk">Ukrainian · Українська</option><option value="pl">Polish · Polski</option><option value="cs">Czech · Čeština</option><option value="sk">Slovak · Slovenčina</option><option value="hu">Hungarian · Magyar</option><option value="ro">Romanian · Română</option><option value="bg">Bulgarian · Български</option><option value="sr">Serbian · Српски</option><option value="hr">Croatian · Hrvatski</option><option value="el">Greek · Ελληνικά</option><option value="de">German · Deutsch</option><option value="fr">French · Français</option><option value="es">Spanish · Español</option><option value="pt">Portuguese · Português</option><option value="it">Italian · Italiano</option><option value="nl">Dutch · Nederlands</option><option value="ca">Catalan · Català</option><option value="sv">Swedish · Svenska</option><option value="da">Danish · Dansk</option><option value="no">Norwegian · Norsk</option><option value="fi">Finnish · Suomi</option><option value="is">Icelandic · Íslenska</option><option value="id">Indonesian · Bahasa Indonesia</option><option value="ms">Malay · Bahasa Melayu</option><option value="tl">Filipino · Tagalog</option><option value="vi">Vietnamese · Tiếng Việt</option><option value="th">Thai · ไทย</option><option value="zh">Chinese · 中文</option><option value="ja">Japanese · 日本語</option><option value="ko">Korean · 한국어</option><option value="sw">Swahili · Kiswahili</option><option value="af">Afrikaans · Afrikaans</option><option value="am">Amharic · አማርኛ</option><option value="az">Azerbaijani · Azərbaycan</option></optgroup></select></label><label>Caption height<input id="caption-y" type="range" min="500" max="1750" value="1450"></label><button id="transcribe" class="secondary">Generate subtitles</button></div><p class="muted">Transcribes your selected time range locally. First use downloads a speech model. Check names and Hindi / English words before posting.</p><label class="toggle"><input id="timing-editor" type="checkbox"> Edit word timings</label><div class="controls"><label>Shift captions (seconds)<input id="caption-shift" type="number" step="0.1" value="0.5"></label><button id="shift-captions">Shift all words</button></div><div id="words" class="word-editor"></div><div class="copy-grid"><label>Opening hook / optional<input id="hook" placeholder="Add your own opening line" maxlength="65"></label><label>Clip title<input id="clip-title" placeholder="Give this clip a name"></label></div><div class="sfx-panel" style="margin-top:14px;background:#151022;padding:12px 16px;border-radius:10px;border:1px solid #30263e"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b style="color:#d4fb58;font-size:13px">🔊 Meme Sound Effect (SFX)</b><div style="display:flex;gap:6px"><button type="button" id="sfx-preview-btn" class="chip" style="cursor:pointer;padding:2px 10px;font-size:11px;background:#30263e;color:#58e8f7">▶ Play Sound</button><label class="chip" style="cursor:pointer;padding:2px 10px;font-size:11px;background:#30263e;color:#ff4ba5">+ Upload Custom <input type="file" id="sfx-upload-input" accept="audio/*" style="display:none"></label></div></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;font-size:11px"><label>Sound Effect<select id="sfx-select" style="width:100%"><option value="none">None (No SFX / Remove)</option><option value="vine_boom" selected>💥 Vine Boom Bass</option><option value="whoosh">💨 Whoosh Transition</option><option value="ding">🔔 Ding / Bell Chime</option><option value="punch">🥊 Punch / Slap Hit</option><option value="bruh">🗿 Bruh Sound</option><option value="fail">🎺 Fail / Sad Horn</option><option value="record_scratch">🛑 Record Scratch</option></select></label><label>Trigger Timing<select id="sfx-time" style="width:100%"><option value="hook" selected>Hook Moment (~0.8s)</option><option value="start">At Clip Start (0.1s)</option><option value="peak">Peak / Climax Moment</option></select></label><label>SFX Volume <span id="sfx-val-vol" style="color:#ff4ba5">75%</span><input id="sfx-volume" type="range" min="10" max="150" value="75" style="width:100%"></label></div><div id="sfx-status" class="muted" style="margin-top:4px;font-size:11px"></div></div><label>Post caption<textarea id="post-caption" rows="2" placeholder="Generate subtitles to draft a caption, then edit it in your voice."></textarea></label></section>
-<section class="panel" id="style-panel"><div class="section-head"><h2><span class="step">05</span> Style &amp; extras</h2><span class="pill">NEW</span></div>
-<p class="muted">Optional. Wrap the clip in a post card, add a padded card on a background, a logo, a credit line, an outro ribbon and a music bed. These apply to Make clips, single exports and “Edit saved clips”.</p>
-<div class="controls">
-<label>Template<select id="st-template"><option value="none">None (use the layout above)</option><option value="x_light">X post · light</option><option value="x_dark">X post · dark</option><option value="tiktok_hook">TikTok hook</option><option value="breaking_news">Breaking news</option></select></label>
-<label>Name on the card<input id="st-tpl-name" type="text" maxlength="28" placeholder="Your Name"></label>
-<label>@handle<input id="st-tpl-handle" type="text" maxlength="28" placeholder="yourhandle"></label>
-</div>
-<div class="controls">
-<label>Background<select id="st-bg-mode"><option value="none">None</option><option value="blur">Blurred copy</option><option value="color">Colour</option><option value="gradient">Gradient</option><option value="image">My image</option></select></label>
-<label>Colour<input id="st-bg-color" type="color" value="#0b0912"></label>
-<label>Colour 2<input id="st-bg-color2" type="color" value="#ff4ba5"></label>
-<label><span>Padding <output id="st-padding-o">0</output>%</span><input id="st-padding" type="range" min="0" max="25" value="0"></label>
-<label><span>Rounded corners <output id="st-radius-o">0</output></span><input id="st-radius" type="range" min="0" max="80" value="0"></label>
-<label><span>Dim image <output id="st-dim-o">25</output>%</span><input id="st-bg-dim" type="range" min="0" max="90" value="25"></label>
-<label class="upload">↑ Background image<input id="st-bg-file" type="file" accept="image/*" hidden></label><span class="muted" id="st-bg-name"></span>
-</div>
-<div class="controls">
-<label class="upload">↑ Logo / watermark<input id="st-wm-file" type="file" accept="image/*" hidden></label><span class="muted" id="st-wm-name">no logo</span>
-<label>Position<select id="st-wm-pos"><option value="tr">Top-right</option><option value="tl">Top-left</option><option value="br">Bottom-right</option><option value="bl">Bottom-left</option></select></label>
-<label><span>Size <output id="st-wm-size-o">16</output>%</span><input id="st-wm-size" type="range" min="5" max="40" value="16"></label>
-<label><span>Opacity <output id="st-wm-op-o">85</output>%</span><input id="st-wm-opacity" type="range" min="10" max="100" value="85"></label>
-</div>
-<div class="controls">
-<label>Credit line<input id="st-credit" type="text" maxlength="60" placeholder="Clip: Channel name"></label>
-<label class="check"><input id="st-credit-auto" type="checkbox"> Use the video’s channel name</label>
-<label>Outro ribbon<input id="st-outro" type="text" maxlength="40" placeholder="FOLLOW @yourhandle"></label>
-<label>Outro seconds<input id="st-outro-sec" type="number" min="1.5" max="8" step=".5" value="3"></label>
-</div>
-<div class="controls">
-<label class="upload">↑ Music track<input id="st-music-file" type="file" accept="audio/*" hidden></label><span class="muted" id="st-music-name">no music</span>
-<label><span>Volume <output id="st-mv-o">15</output>%</span><input id="st-music-vol" type="range" min="0" max="100" value="15"></label>
-<label><span>Peak volume <output id="st-mp-o">85</output>%</span><input id="st-music-peak" type="range" min="0" max="100" value="85"></label>
-<label>Riser seconds<input id="st-music-riser" type="number" min="1" max="15" step="1" value="4"></label>
-</div>
-<div class="import-note">The music sits low under the voice, then rises to its peak volume in the last seconds. Your logo, music and image stay on this computer.</div>
-<div class="controls"><button class="secondary" id="st-reset">Reset all style options</button></div></section>
-<section class="panel" id="saved-edit" hidden><h2>Edit saved clips</h2><h3 style="margin-top:18px">Speaker position &amp; shape · 11 layouts</h3><div id="edit-layouts" class="layout-grid"></div><label>Speaker size<input id="edit-top" type="range" min="20" max="50" value="32"></label><p class="muted">Reuse the saved video, selected moments and subtitle timings. Only the final MP4 is exported again. <b>To cut the clip shorter</b> (for example to remove a spoken part), change <b>Start / End</b> above and press <b>Only this clip</b>; the subtitles move with the cut. Each clip keeps its own transcript.</p><div class="controls" style="margin-top:14px"><button class="primary" id="apply-video">Apply to all clips of this video</button><button class="secondary" id="apply-one">Only this clip</button><button id="download-bundle">Download video’s clips ZIP</button><a id="bundle-link" hidden download>Download ZIP</a></div></section><section class="export-bar"><div><b id="status" role="status">Add a video to begin.</b><p id="detail">Your exports stay on this computer and appear in My clips.</p></div><button id="batch">Export video highlights</button><button class="primary" id="export">Export clip ↗</button><a id="download" class="download" hidden download="neoncut-clip.mp4">↓ Download MP4</a><a id="srt" hidden>↓ Subtitles SRT</a><a id="vtt" hidden>↓ WebVTT</a></section></section>
-<section id="library-view" hidden><section class="library-heading"><h2>Your clips, <em>ready to go.</em></h2><button id="refresh-library">Refresh library</button></section><p class="muted">Finished exports stay in the studio's data folder. Download an MP4 to keep or share it.</p><div id="library" class="library-grid"></div></section><footer>NEONCLIPPING STUDIO <span>Review your moment. Keep the creator's campaign brief in view.</span></footer></main><script src="/assets/app.js?v=20261121-src6"></script>
-<script src="/assets/extras.js?v=20261121-src6"></script><script src="/assets/transcripts.js?v=20261121-src6"></script><script src="/assets/vision.js?v=20261121-src6"></script><script src="/assets/report.js?v=20261121-src6"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="color-scheme" content="dark">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>NeonClipping Pro · Studio Video Editor</title>
+  <link rel="stylesheet" href="/assets/style.css?v=20261122-capcut1">
+</head>
+<body class="capcut-app-body">
+
+  <!-- TOP MINIMAL CAPCUT APP HEADER -->
+  <header class="capcut-topbar">
+    <div class="capcut-topbar-left">
+      <div class="capcut-brand">
+        <span class="engine-indicator pulse" title="Engine Status: Online"></span>
+        <span class="brand-title">NEON<strong>CLIPPING</strong></span>
+        <span class="brand-badge">CAPCUT STUDIO</span>
+      </div>
+      <div class="capcut-seq-pill">
+        <span class="seq-icon">🎬</span>
+        <span class="seq-name">Sequence 01</span>
+        <span class="seq-info">1080×1920 (9:16) · 60 FPS</span>
+      </div>
+    </div>
+
+    <!-- WORKSPACE MODE SWITCHER -->
+    <nav class="capcut-workspace-tabs">
+      <button class="ws-tab active" data-ws="edit"><span class="ws-icon">🎞️</span> Edit Studio</button>
+      <button class="ws-tab" data-ws="ai"><span class="ws-icon">⚡</span> 1-Click AI</button>
+      <button class="ws-tab" data-ws="effects"><span class="ws-icon">🎨</span> Color &amp; FX</button>
+      <button class="ws-tab" data-ws="captions"><span class="ws-icon">💬</span> Subtitles</button>
+      <button class="ws-tab" data-ws="library" data-view="library"><span class="ws-icon">▦</span> My Clips <span id="library-count-badge" class="ws-count">0</span></button>
+    </nav>
+
+    <!-- RIGHT QUICK ACTION CONTROLS -->
+    <div class="capcut-topbar-right">
+      <button class="btn-top-make" id="top-make" type="button" title="1-Click AI Highlights">⚡ Make Clips</button>
+      <button class="btn-top-export" id="top-export" type="button" title="Render Current Clip">🎬 Export ↗</button>
+      <div class="topbar-divider"></div>
+      <button class="topbar-icon-btn" id="info-toggle-btn" type="button" title="Project Info">ⓘ</button>
+      <button class="side-report topbar-icon-btn" id="report-side" type="button" title="Report a problem">⚑</button>
+      <a class="topbar-star-btn" href="https://github.com/iamajmeena/neonclipping" target="_blank" rel="noopener" title="Star on GitHub">★ Star</a>
+    </div>
+  </header>
+
+  <!-- COLLAPSIBLE NOTICES / UPDATES / DONATE BAR -->
+  <div class="nle-drawer-bar" id="nle-drawer-bar" hidden>
+    <div class="update-bar" id="update-bar" hidden>
+      <span id="update-text"></span>
+      <span class="update-actions">
+        <button class="primary" id="update-now" type="button">Update now</button>
+        <button class="secondary" id="update-cancel" type="button" hidden>Cancel</button>
+        <label class="check"><input id="update-auto" type="checkbox" checked> Auto-update when idle</label>
+      </span>
+    </div>
+    <div class="support-bar" id="support-bar" hidden>
+      <span><b>NeonClipping is free &amp; open-source.</b> Independent local processing without subscription.</span>
+      <span class="support-actions">
+        <button class="don-big" id="donate-bar" type="button">♥ Support</button>
+      </span>
+    </div>
+  </div>
+
+  <dialog id="donate-dialog">
+    <b>Help us keep building NeonClipping ♥</b>
+    <p>NeonClipping is free and open-source. Every donation goes straight into making the next version better.</p>
+    <div class="don-links">
+      <a id="don-rzp" target="_blank" rel="noopener" hidden>Donate with UPI / cards</a>
+      <a id="don-pp" target="_blank" rel="noopener" hidden>Donate with PayPal</a>
+    </div>
+    <button id="don-close">Close</button>
+  </dialog>
+
+  <!-- CAPCUT MAIN WORKSPACE WRAPPER -->
+  <div class="capcut-workspace-root">
+
+    <!-- HIDDEN RAIL PRESERVING DOM NODES -->
+    <aside class="sidebar nle-rail" style="display:none">
+      <button class="nav active rail-btn" data-view="editor">Studio</button>
+      <button class="nav rail-btn" data-view="library">Clips <span id="library-count">0</span></button>
+      <div id="supporters" hidden><div id="supporters-list"></div></div>
+    </aside>
+
+    <!-- VIEW: EDITOR WORKSPACE -->
+    <main class="capcut-editor-container" id="editor-view">
+
+      <!-- =====================================================================
+           TOP SECTION: 3-COLUMN CAPCUT PANELS (MEDIA | PLAYER | INSPECTOR)
+           ===================================================================== -->
+      <div class="capcut-top-section" id="capcut-top-section">
+
+        <!-- -------------------------------------------------------------------
+             PANE 1 (TOP LEFT): MEDIA / ASSETS & INGEST BIN
+             ------------------------------------------------------------------- -->
+        <section class="capcut-panel capcut-media-dock" id="dock-left">
+          
+          <!-- CapCut Media Tabs Header -->
+          <div class="capcut-panel-header">
+            <div class="capcut-tab-strip">
+              <button class="capcut-tab-btn active" data-bintab="ingest" title="Media & Ingest">
+                <span class="tab-icon">🎞️</span>
+                <span class="tab-label">Media</span>
+              </button>
+              <button class="capcut-tab-btn" data-bintab="layouts" title="Screen Elements & Layouts">
+                <span class="tab-icon">⬡</span>
+                <span class="tab-label">Elements</span>
+              </button>
+              <button class="capcut-tab-btn" data-bintab="highlights" title="AI Highlights & Detection">
+                <span class="tab-icon">✂</span>
+                <span class="tab-label">Highlights</span>
+              </button>
+              <button class="capcut-tab-btn" data-bintab="ai" title="Batch Automation & Live Capture">
+                <span class="tab-icon">🤖</span>
+                <span class="tab-label">AI Tools</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="capcut-media-body dock-content">
+
+            <!-- TAB: INGEST / SOURCE (CAPCUT MEDIA BIN) -->
+            <div class="dock-tab-content active" id="tab-bin-ingest">
+              
+              <div class="capcut-media-inner-layout">
+                <!-- CapCut Sub-Rail -->
+                <div class="capcut-subrail">
+                  <div class="subrail-item active" title="Favorite Items"><span class="sub-ic">⭐</span> Favorite</div>
+                  <div class="subrail-item" title="Default Library"><span class="sub-ic">⊞</span> Default</div>
+                  <div class="subrail-item" id="subrail-library-btn" data-view="library" title="Open My Clips Library"><span class="sub-ic">📁</span> New Library</div>
+                </div>
+
+                <!-- CapCut Main Media Area -->
+                <div class="capcut-media-pane">
+                  
+                  <!-- Top Action Bar: + Import and Search/Filter Icons -->
+                  <div class="capcut-import-header">
+                    <label class="capcut-import-button" title="Upload video file from computer">
+                      <span class="plus">+</span> Import
+                      <input id="file" type="file" accept="video/*" hidden>
+                    </label>
+                    <div class="capcut-media-tools">
+                      <span class="media-tool-icon" title="Search">🔍</span>
+                      <span class="media-tool-icon" title="Sort">⇅</span>
+                      <span class="media-tool-icon" title="Filter">⑂</span>
+                    </div>
+                  </div>
+
+                  <!-- Iconic CapCut Dropzone Card -->
+                  <div class="capcut-dropzone-card" id="capcut-dropzone">
+                    <div class="dropzone-arrow-ring">
+                      <span class="dropzone-down-arrow">↓</span>
+                    </div>
+                    <div class="dropzone-title">Import Stock</div>
+                    <div class="dropzone-sub">Drop video file here or paste link below</div>
+
+                    <!-- Embedded Video Link Bar -->
+                    <div class="capcut-url-field-wrap">
+                      <input id="url" type="url" placeholder="Paste link (YouTube, Twitch, Kick)...">
+                      <select id="srcq" title="Download Quality">
+                        <option value="1080" selected>1080p</option>
+                        <option value="2160">4K</option>
+                        <option value="1440">1440p</option>
+                        <option value="720">720p</option>
+                        <option value="480">480p</option>
+                        <option value="360">360p</option>
+                      </select>
+                    </div>
+
+                    <div class="capcut-fetch-actions">
+                      <button class="primary capcut-btn-cyan" id="link">Fetch Preview ↗</button>
+                      <button class="primary make capcut-btn-pink" id="make">⚡ 1-Click Make</button>
+                    </div>
+
+                    <div class="nle-note" id="link-status" role="status">Paste a link or import MP4 to begin editing.</div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Long Video Range Selector -->
+              <div id="range-pick" class="range-pick" hidden style="margin-top:10px">
+                <b id="range-title">Long Video Range</b>
+                <p class="muted" id="range-text"></p>
+                <div class="controls range-pick-controls">
+                  <label>From: <input id="range-start" type="text" value="0:00:00" inputmode="numeric"></label>
+                  <label>To: <input id="range-end" type="text" value="0:30:00" inputmode="numeric"></label>
+                  <button class="primary" id="range-go">Import Range ↗</button>
+                </div>
+              </div>
+
+              <!-- Storyboard Frames -->
+              <div class="panel-section-title" style="margin-top:14px">
+                <span>STORYBOARD PREVIEW FRAMES</span>
+                <label class="toggle-sm"><input id="auto-analyze" type="checkbox" checked> Auto-find peaks</label>
+              </div>
+              <div id="frames" class="frames nle-frames-strip"></div>
+            </div>
+
+            <!-- TAB: HIGHLIGHTS -->
+            <div class="dock-tab-content" id="tab-bin-highlights">
+              <div class="panel-section-title">
+                <span>DETECTED HIGHLIGHTS</span>
+                <button class="secondary btn-sm" id="analyze">✦ Scan Moments</button>
+              </div>
+
+              <div class="candidate-row" style="margin-top:8px">
+                <select id="recent" class="nle-select-full">
+                  <option>No highlights yet — Fetch a video first</option>
+                </select>
+                <button id="import" class="btn-sm">Load</button>
+              </div>
+
+              <div class="nle-group-box" style="margin-top:10px">
+                <div class="group-box-title">Detection Parameters</div>
+                <div class="grid-2col" style="margin-top:6px">
+                  <label>Mode:
+                    <select id="mode">
+                      <option value="fast">⚡ Fast (~2 min)</option>
+                      <option value="deep">🔬 Deep (Audio+Motion)</option>
+                    </select>
+                  </label>
+                  <label>Clip Count:
+                    <input id="count" type="number" min="1" max="12" value="4">
+                  </label>
+                  <label>Min Length (s):
+                    <input id="minlen" type="number" min="5" max="120" value="30">
+                  </label>
+                  <label>Max Length (s):
+                    <input id="length" type="number" min="10" max="180" value="60">
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB: ELEMENTS / LAYOUTS -->
+            <div class="dock-tab-content" id="tab-bin-layouts">
+              <div class="panel-section-title">
+                <span>OUTPUT SCREEN LAYOUT</span>
+              </div>
+
+              <div class="layout-grid" id="layouts" style="margin-top:8px">
+                <button class="choice active" data-layout="stack">
+                  <span class="mini stack-mini"><i></i><i></i></span>
+                  <b>Face + Gameplay</b>
+                  <small>Stack vertical split</small>
+                </button>
+                <button class="choice" data-layout="blur">
+                  <span class="mini blur-mini"><i></i></span>
+                  <b>Blurred Fill</b>
+                  <small>Full wide frame</small>
+                </button>
+                <button class="choice" data-layout="fill">
+                  <span class="mini fill-mini"><i></i></span>
+                  <b>Fill Screen</b>
+                  <small>Center 9:16 crop</small>
+                </button>
+                <button class="choice" data-layout="game">
+                  <span class="mini game-mini"><i></i></span>
+                  <b>Gameplay Only</b>
+                  <small>Selected area</small>
+                </button>
+              </div>
+
+              <div class="panel-section-title" style="margin-top:14px">
+                <span>FACECAM QUICK PRESET</span>
+              </div>
+              <div class="preset-row">
+                <button class="chip" data-preset="tl">↖ TL</button>
+                <button class="chip" data-preset="tr">↗ TR</button>
+                <button class="chip" data-preset="bl">↙ BL</button>
+                <button class="chip" data-preset="br">↘ BR</button>
+                <button class="chip" data-preset="bc">⬇ Center</button>
+                <button class="chip" data-preset="none">No Cam</button>
+              </div>
+              <div class="muted" id="preset-note" style="margin-top:6px;font-size:11px">Draw boxes directly on the Source Monitor to customize.</div>
+
+              <!-- BRAINROT / VIRAL SPLIT-SCREEN PANEL -->
+              <div id="brainrot-panel" class="brainrot-panel" hidden style="margin-top:14px">
+                <div class="panel-section-title">
+                  <span style="color:#d4fb58">🎮 VIRAL SPLIT-SCREEN LOOP</span>
+                  <div style="display:flex;gap:4px">
+                    <button type="button" id="brainrot-preview-btn" class="chip btn-sm">▶ Play Loop</button>
+                    <label class="chip btn-sm">+ Upload <input type="file" id="brainrot-upload-input" accept="video/*" style="display:none"></label>
+                  </div>
+                </div>
+                <div class="grid-2col" style="margin-top:8px">
+                  <label>Satisfying Gameplay:
+                    <select id="brainrot-bg-select">
+                      <option value="subway" selected>🚇 Subway Surfers</option>
+                      <option value="minecraft">🧱 Minecraft Parkour</option>
+                      <option value="gta">🚗 GTA 5 Ramp</option>
+                      <option value="soap">🧼 Soap Slicing</option>
+                    </select>
+                  </label>
+                  <label>Split Ratio: <span id="brainrot-val-split">50/50</span>
+                    <input id="brainrot-split" type="range" min="30" max="70" value="50">
+                  </label>
+                  <label>Top Streamer Box:
+                    <select id="brainrot-source-select">
+                      <option value="game" selected>Gameplay Area</option>
+                      <option value="cam">Facecam Area</option>
+                      <option value="full">Full Source</option>
+                    </select>
+                  </label>
+                  <label>Loop Placement:
+                    <select id="brainrot-pos-select">
+                      <option value="bottom" selected>Bottom Loop</option>
+                      <option value="top">Top Loop</option>
+                    </select>
+                  </label>
+                  <label>Framing Crop:
+                    <select id="brainrot-crop-select">
+                      <option value="center" selected>Center Fill</option>
+                      <option value="left">Left Focus</option>
+                      <option value="right">Right Focus</option>
+                      <option value="fit">Contain (No Crop)</option>
+                    </select>
+                  </label>
+                  <label>Loop Speed:
+                    <select id="brainrot-speed-select">
+                      <option value="1.0" selected>1.0x Normal</option>
+                      <option value="1.25">1.25x Viral</option>
+                      <option value="1.5">1.5x Fast</option>
+                    </select>
+                  </label>
+                  <label>Loop Audio:
+                    <select id="brainrot-vol-select">
+                      <option value="0.0" selected>Muted (0%)</option>
+                      <option value="0.10">Low (10%)</option>
+                      <option value="0.25">Med (25%)</option>
+                    </select>
+                  </label>
+                </div>
+                <div style="display:flex;gap:6px;margin-top:8px">
+                  <input type="text" id="brainrot-link-input" placeholder="Custom loop URL..." style="flex:1">
+                  <button type="button" id="brainrot-import-btn" class="chip">Import</button>
+                </div>
+                <div id="brainrot-status" class="muted" style="margin-top:4px;font-size:10px"></div>
+              </div>
+            </div>
+
+            <!-- TAB: AI TOOLS & BATCH QUEUE -->
+            <div class="dock-tab-content" id="tab-bin-ai">
+              <!-- 1-Click Make Results -->
+              <div id="make-results" hidden>
+                <div class="panel-section-title">
+                  <span>1-CLICK AI RESULTS</span>
+                  <b id="make-status"></b>
+                </div>
+                <div class="progress-track"><div id="make-progress"></div></div>
+                <div id="make-grid" class="make-grid"></div>
+              </div>
+
+              <!-- Processing Queue Panel -->
+              <details class="nle-details-card" id="queue-panel">
+                <summary><b>📋 Processing Queue</b> · Batch automation</summary>
+                <label style="margin-top:8px">URLs (one per line):
+                  <textarea id="queue-urls" rows="2" placeholder="https://www.youtube.com/watch?..."></textarea>
+                </label>
+                <div class="controls" style="margin-top:8px">
+                  <input id="queue-time" type="datetime-local">
+                  <button class="secondary btn-sm" id="queue-add">Add to Queue</button>
+                  <button class="btn-sm" id="queue-pause">Pause</button>
+                  <button class="btn-sm" id="queue-refresh">Refresh</button>
+                </div>
+                <div id="queue-list" style="margin-top:8px"></div>
+              </details>
+
+              <!-- AI Transcript Split Panel -->
+              <details class="nle-details-card" id="ai-panel">
+                <summary><b>🤖 Chatbot Transcript Split</b></summary>
+                <p class="muted" style="font-size:11px;margin:6px 0">Split long stream transcript into bite-sized chunks for ChatGPT/Gemini.</p>
+                <div class="url-row">
+                  <input id="ai-url" type="text" placeholder="YouTube Stream Link">
+                  <button class="primary btn-sm" id="ai-split">Split</button>
+                </div>
+                <div class="controls" style="margin-top:6px">
+                  <label>Parts: <input id="ai-parts" type="number" min="1" max="40" placeholder="auto"></label>
+                  <label>Moments/part: <input id="ai-per" type="number" min="1" max="10" value="3"></label>
+                </div>
+                <div class="muted" id="ai-status" style="margin:4px 0"></div>
+                <div id="ai-list"></div>
+                <div style="margin-top:10px">
+                  <textarea id="ai-answers" rows="3" placeholder="Paste moments e.g. 12:30-13:10 Plane crash..."></textarea>
+                  <div class="controls" style="margin-top:6px">
+                    <button class="secondary btn-sm" id="ai-read">Parse Answers</button>
+                    <button class="primary btn-sm" id="ai-make" disabled>Make Clips</button>
+                  </div>
+                </div>
+                <div id="ai-moments"></div>
+              </details>
+
+              <!-- Creators Panel -->
+              <details class="nle-details-card creators-panel">
+                <summary><b>👥 Streamer Watchdog</b></summary>
+                <div class="url-row" style="margin-top:6px">
+                  <input id="creator-url" type="text" placeholder="Twitch name or YouTube channel">
+                  <button class="primary btn-sm" id="creator-add">+ Add</button>
+                </div>
+                <div id="creator-note" class="muted" style="margin-top:4px"></div>
+                <div id="creator-list"></div>
+              </details>
+
+              <!-- Live Clipping Panel -->
+              <details class="nle-details-card live-panel">
+                <summary><b>⚡ Live Stream Capture</b></summary>
+                <div class="url-row" style="margin-top:6px">
+                  <input id="live-url" type="text" placeholder="Twitch or YouTube Live URL">
+                  <button class="primary btn-sm" id="live-start">● Start</button>
+                </div>
+                <div id="live-box" hidden>
+                  <div class="live-stats" id="live-stats"></div>
+                  <div class="live-actions">
+                    <button class="secondary btn-sm" id="live-now">✂ Clip 30s</button>
+                    <button class="secondary btn-sm" id="live-stop">■ Stop</button>
+                  </div>
+                  <div id="live-grid" class="make-grid"></div>
+                </div>
+              </details>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- -------------------------------------------------------------------
+             PANE 2 (TOP CENTER): VIDEO PLAYER / MONITORS VIEWPORT
+             ------------------------------------------------------------------- -->
+        <section class="capcut-panel capcut-player-bay" id="player-center-bay">
+          
+          <!-- CapCut Player Topbar -->
+          <div class="capcut-player-topbar">
+            <div class="capcut-view-modes">
+              <button type="button" class="c-mode-pill active" id="btn-view-dual" title="Side-by-side Dual Monitors">◫ Dual View</button>
+              <button type="button" class="c-mode-pill" id="btn-view-src" title="Source Monitor Focus">▣ Source</button>
+              <button type="button" class="c-mode-pill" id="btn-view-prog" title="9:16 Program Output Focus">📱 Program</button>
+            </div>
+            <div class="capcut-player-top-tools">
+              <button id="cam" class="active chip btn-xs" title="Crop Facecam Box">▣ Facecam</button>
+              <button id="game" class="chip btn-xs" title="Crop Gameplay Box">▣ Gameplay</button>
+              <button id="save" class="chip btn-xs" title="Save Layout">💾 Save</button>
+              <button id="load" class="chip btn-xs" title="Load Layout">📂 Load</button>
+              <button type="button" id="fit-bottom-btn" class="chip btn-xs" title="Maximize Monitor Area">↕ Max</button>
+              <button type="button" id="source-expand-btn" class="chip btn-xs" title="Expand Viewport">⛶ Expand</button>
+            </div>
+          </div>
+
+          <!-- DUAL MONITORS ROW -->
+          <div class="nle-monitors-row workspace" id="capcut-monitors-row">
+
+            <!-- SOURCE MONITOR (LEFT VIEWPORT) -->
+            <div class="nle-monitor-box source-side" id="source-monitor-box">
+              <div class="monitor-topbar">
+                <div class="mon-title-badge">
+                  <span class="mon-led live"></span>
+                  <span class="mon-name">SOURCE MONITOR</span>
+                  <span class="mon-pill" id="source-mode">NO SOURCE</span>
+                </div>
+              </div>
+
+              <div class="canvas-wrap nle-source-canvas-wrap">
+                <canvas id="source" width="960" height="540"></canvas>
+                <div id="empty-source">
+                  <div class="empty-icon">📺</div>
+                  <div class="empty-title">Source Standby</div>
+                  <small>Paste video link or upload MP4 to draw crop boxes.</small>
+                </div>
+              </div>
+
+              <!-- Video Sync Element -->
+              <video id="video" controls preload="metadata"></video>
+
+              <div class="monitor-bottom-strip">
+                <label id="height-control" class="nle-inline-slider">
+                  <span>Facecam Size: <strong id="height-value">32%</strong></span>
+                  <input id="top" type="range" min="20" max="50" value="32">
+                </label>
+                <span class="monitor-hint">💡 Drag boxes on frame · Corner ⤡ to resize</span>
+              </div>
+
+              <!-- Corner Resize Handle -->
+              <div class="monitor-corner-resize" id="source-corner-resizer" title="Drag corner to resize">⤡</div>
+            </div>
+
+            <!-- VERTICAL SPLITTER TO RESIZE WIDTH -->
+            <div class="monitors-vertical-splitter" id="mon-v-splitter" title="Drag left/right to resize widths"></div>
+
+            <!-- PROGRAM MONITOR (RIGHT VIEWPORT - 9:16 VERTICAL OUTPUT) -->
+            <aside class="preview-side nle-monitor-box nle-program-box" id="preview-side">
+              <div class="preview-header monitor-topbar" id="preview-drag-handle">
+                <div class="mon-title-badge">
+                  <span class="mon-led prog"></span>
+                  <span class="mon-name">PROGRAM MONITOR</span>
+                  <span class="aspect-tag">9:16</span>
+                </div>
+                <div class="monitor-actions">
+                  <button type="button" id="program-expand-btn" class="chip btn-xs" title="Expand width">⛶</button>
+                  <button type="button" id="preview-pin-btn" class="chip btn-xs" title="Pin / Float window">📌 Float</button>
+                  <button type="button" id="preview-min-btn" class="chip btn-xs" title="Minimize / Expand">🗕</button>
+                </div>
+              </div>
+
+              <div class="preview-body nle-program-body" id="preview-body">
+                <div class="nle-program-canvas-container">
+                  <canvas id="preview" width="540" height="960"></canvas>
+                </div>
+                <div class="program-bottom-bar">
+                  <label class="toggle toggle-sm"><input id="safe-zones" type="checkbox"> Safe Zones</label>
+                  <span class="preview-res-badge">1080 × 1920</span>
+                </div>
+              </div>
+
+              <!-- Corner Resize Handle -->
+              <div class="monitor-corner-resize" id="program-corner-resizer" title="Drag corner to resize">⤡</div>
+            </aside>
+
+          </div>
+
+          <!-- CAPCUT PLAYER CONTROL STRIP (DIRECTLY BELOW VIDEO) -->
+          <div class="capcut-player-control-strip">
+            <!-- Left: Timecode -->
+            <div class="capcut-tc-display">
+              <span class="tc-current" id="nle-tc-display">0:00.00</span>
+              <span class="tc-divider">/</span>
+              <span class="tc-total" id="nle-tc-dur">0:30.00</span>
+            </div>
+
+            <!-- Center: Playback Transport Buttons -->
+            <div class="capcut-player-buttons">
+              <button type="button" class="c-ctrl-btn" id="t-btn-start" title="Go to Start">|◀</button>
+              <button type="button" class="c-ctrl-btn" id="t-btn-step-b" title="Step Back 1s">◀◀</button>
+              <button type="button" class="c-ctrl-btn c-play-btn" id="t-btn-play" title="Play / Pause (Space)">▶</button>
+              <button type="button" class="c-ctrl-btn" id="t-btn-step-f" title="Step Forward 1s">▶▶</button>
+              <button type="button" class="c-ctrl-btn" id="t-btn-end" title="Go to End">▶|</button>
+              <div class="c-btn-sep"></div>
+              <button type="button" class="c-ctrl-mark" id="t-btn-mark-in" title="Mark In">[ In</button>
+              <button type="button" class="c-ctrl-mark" id="t-btn-mark-out" title="Mark Out">Out ]</button>
+            </div>
+
+            <!-- Right: Ratio & Tools -->
+            <div class="capcut-player-tools-right">
+              <div class="capcut-ratio-wrapper">
+                <select id="aspect" class="capcut-aspect-dropdown" title="Aspect Ratio">
+                  <option value="vertical" selected>Original ▾</option>
+                  <option value="vertical">9:16 (Shorts/TikTok)</option>
+                  <option value="landscape">16:9 (YouTube)</option>
+                  <option value="square">1:1 Square</option>
+                  <option value="portrait">4:5 Feed</option>
+                  <option value="threefour">3:4 Portrait</option>
+                </select>
+              </div>
+              <button type="button" class="c-tool-icon-btn" id="crop-shortcut-btn" title="Crop Mode">▣</button>
+              <button type="button" class="c-tool-icon-btn" id="safe-shortcut-btn" title="Safe Zones">⊡</button>
+              <button type="button" class="c-tool-icon-btn" id="fs-shortcut-btn" title="Fullscreen">⛶</button>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- -------------------------------------------------------------------
+             PANE 3 (TOP RIGHT): DETAILS / INSPECTOR ("SELECT TO EDIT")
+             ------------------------------------------------------------------- -->
+        <section class="capcut-panel capcut-inspector-dock" id="dock-right">
+          
+          <div class="capcut-panel-header capcut-inspector-header">
+            <!-- CapCut Iconic "Select to Edit" badge -->
+            <div class="capcut-select-to-edit" title="Properties">
+              <span class="ste-icon">⊞</span>
+              <span class="ste-text">Select to Edit</span>
+            </div>
+            <div class="capcut-tab-strip">
+              <button class="capcut-tab-btn active" data-inspectortab="captions" title="Subtitles & hook">💬 Text</button>
+              <button class="capcut-tab-btn" data-inspectortab="fx" title="Color grading & effects">🎨 FX</button>
+              <button class="capcut-tab-btn" data-inspectortab="audio" title="Meme sounds & audio">🔊 Audio</button>
+              <button class="capcut-tab-btn" data-inspectortab="style" title="Templates & branding">🎛 Style</button>
+            </div>
+          </div>
+
+          <div class="capcut-inspector-body dock-content">
+
+            <!-- TAB: CAPTIONS & SUBTITLES -->
+            <div class="dock-tab-content active" id="tab-inspector-captions">
+              <div class="panel-section-title">
+                <span>SUBTITLES &amp; HOOK</span>
+                <label class="toggle-sm"><input id="captions" type="checkbox" checked> Burn Subtitles</label>
+              </div>
+
+              <!-- Caption Styles Cards -->
+              <div class="caption-styles">
+                <button class="caption-choice active gta" data-style="gta">
+                  <span>THIS IS <strong>WILD</strong></span>
+                  <b>GTA Neon</b>
+                </button>
+                <button class="caption-choice bold" data-style="bold">
+                  <span>THIS IS <strong>WILD</strong></span>
+                  <b>Impact</b>
+                </button>
+                <button class="caption-choice hormozi" data-style="hormozi">
+                  <span>THIS IS <strong style="color:#00ffff">WILD</strong></span>
+                  <b>Hormozi</b>
+                </button>
+                <button class="caption-choice mrbeast" data-style="mrbeast">
+                  <span style="color:#ffff00">THIS IS <strong style="color:#ff6600">WILD</strong></span>
+                  <b>MrBeast</b>
+                </button>
+                <button class="caption-choice clean" data-style="clean">
+                  <span>This is wild.</span>
+                  <b>Clean</b>
+                </button>
+              </div>
+
+              <div class="grid-2col" style="margin-top:10px">
+                <label>Spoken Language:
+                  <select id="language">
+                    <option value="">Auto (Hindi → Hinglish)</option>
+                    <option value="hinglish">Hinglish</option>
+                    <option value="hi">हिंदी (Devanagari)</option>
+                    <option value="en">English</option>
+                    <optgroup label="More languages">
+                      <option value="es">Spanish</option>
+                      <option value="fr">French</option>
+                      <option value="de">German</option>
+                      <option value="pt">Portuguese</option>
+                      <option value="ru">Russian</option>
+                      <option value="ja">Japanese</option>
+                      <option value="ko">Korean</option>
+                      <option value="ar">Arabic</option>
+                    </optgroup>
+                  </select>
+                </label>
+                <label>Subtitle Height:
+                  <input id="caption-y" type="range" min="500" max="1750" value="1450">
+                </label>
+              </div>
+
+              <div style="margin-top:10px">
+                <button id="transcribe" class="secondary w-100">🎙️ Generate Subtitles Locally</button>
+              </div>
+
+              <div class="panel-section-title" style="margin-top:14px">
+                <span>WORD TIMING &amp; SYNC</span>
+                <label class="toggle-sm"><input id="timing-editor" type="checkbox"> Precision Timings</label>
+              </div>
+              <div class="controls" style="margin-top:4px">
+                <label>Shift (s): <input id="caption-shift" type="number" step="0.1" value="0.5" style="width:70px"></label>
+                <button id="shift-captions" class="btn-sm">Shift Words</button>
+              </div>
+              <div id="words" class="word-editor"></div>
+
+              <div class="panel-section-title" style="margin-top:14px">
+                <span>TITLES &amp; HOOK COPY</span>
+              </div>
+              <div class="copy-grid">
+                <label>Opening Hook: <input id="hook" placeholder="Add custom hook text" maxlength="65"></label>
+                <label>Clip Title: <input id="clip-title" placeholder="Give this clip a title"></label>
+              </div>
+              <label style="margin-top:8px">Post Caption:
+                <textarea id="post-caption" rows="2" placeholder="Generated viral caption..."></textarea>
+              </label>
+            </div>
+
+            <!-- TAB: COLOR GRADING & VIDEO EFFECTS -->
+            <div class="dock-tab-content" id="tab-inspector-fx">
+              <div class="panel-section-title">
+                <span>FACECAM COLOR &amp; CLARITY</span>
+                <button type="button" id="filters-reset" class="chip btn-xs">↺ Reset</button>
+              </div>
+
+              <div class="controls" style="margin-bottom:8px">
+                <label style="width:100%">Enhance Mode:
+                  <select id="facecam-enhance">
+                    <option value="smart" selected>✨ Smart Clarity &amp; Contrast</option>
+                    <option value="high">🔥 Ultra Sharp</option>
+                    <option value="custom">🎛 Custom Sliders</option>
+                    <option value="off">Off (Original)</option>
+                  </select>
+                </label>
+              </div>
+
+              <!-- Facecam Filters Sliders -->
+              <div class="facecam-filters-panel">
+                <div class="grid-2col">
+                  <label>Contrast: <span id="val-contrast" class="slider-val">100%</span>
+                    <input id="filter-contrast" type="range" min="50" max="180" value="100">
+                  </label>
+                  <label>Brightness: <span id="val-brightness" class="slider-val">0%</span>
+                    <input id="filter-brightness" type="range" min="-40" max="40" value="0">
+                  </label>
+                  <label>Saturation: <span id="val-saturation" class="slider-val">100%</span>
+                    <input id="filter-saturation" type="range" min="0" max="200" value="100">
+                  </label>
+                  <label>Clarity / Sharp: <span id="val-clarity" class="slider-val">0%</span>
+                    <input id="filter-clarity" type="range" min="0" max="100" value="0">
+                  </label>
+                  <label style="grid-column:1/-1">Hue / Tint: <span id="val-hue" class="slider-val">0°</span>
+                    <input id="filter-hue" type="range" min="-180" max="180" value="0">
+                  </label>
+                </div>
+              </div>
+
+              <!-- Video Effects Studio -->
+              <div class="panel-section-title" style="margin-top:14px">
+                <span>VIDEO EFFECTS STUDIO</span>
+                <div style="display:flex;gap:4px">
+                  <span id="effects-active-count" class="chip btn-xs">0 Active</span>
+                  <button type="button" id="effects-reset" class="chip btn-xs">↺ Reset</button>
+                </div>
+              </div>
+
+              <div class="video-effects-panel" id="video-effects-panel">
+                <!-- Effect 1: Dynamic Zoom -->
+                <div class="effect-card">
+                  <div class="effect-head">
+                    <label class="effect-toggle"><input type="checkbox" id="fx-zoom-enable"> 🔍 Dynamic Zoom</label>
+                    <span id="fx-val-zoom-scale" class="effect-badge">1.18x</span>
+                  </div>
+                  <div class="grid-2col">
+                    <label>Timing:
+                      <select id="fx-zoom-timing">
+                        <option value="hook" selected>Hook (0-2s)</option>
+                        <option value="peak">Peak / Climax</option>
+                        <option value="custom">Custom Timing</option>
+                      </select>
+                    </label>
+                    <label>Scale:
+                      <input id="fx-zoom-scale" type="range" min="105" max="135" value="118">
+                    </label>
+                  </div>
+                  <div id="fx-zoom-custom-row" style="display:none" class="grid-2col custom-time-row">
+                    <label>Start: <input type="number" id="fx-zoom-start" value="0.0" min="0" step="0.1"></label>
+                    <label>End: <input type="number" id="fx-zoom-end" value="2.0" min="0" step="0.1"></label>
+                  </div>
+                </div>
+
+                <!-- Effect 2: Screen Shake -->
+                <div class="effect-card">
+                  <div class="effect-head">
+                    <label class="effect-toggle"><input type="checkbox" id="fx-shake-enable"> ⚡ Screen Shake</label>
+                    <span id="fx-val-shake" class="effect-badge">Medium</span>
+                  </div>
+                  <div class="grid-2col">
+                    <label>Timing:
+                      <select id="fx-shake-timing">
+                        <option value="peak" selected>Climax Peak</option>
+                        <option value="hook">Opening Hook</option>
+                        <option value="custom">Custom</option>
+                      </select>
+                    </label>
+                    <label>Intensity:
+                      <select id="fx-shake-intensity">
+                        <option value="low">Subtle</option>
+                        <option value="med" selected>Medium</option>
+                        <option value="high">Heavy</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div id="fx-shake-custom-row" style="display:none" class="grid-2col custom-time-row">
+                    <label>Start: <input type="number" id="fx-shake-start" value="1.5" min="0" step="0.1"></label>
+                    <label>End: <input type="number" id="fx-shake-end" value="2.5" min="0" step="0.1"></label>
+                  </div>
+                </div>
+
+                <!-- Effect 3: Climax Flash -->
+                <div class="effect-card">
+                  <div class="effect-head">
+                    <label class="effect-toggle"><input type="checkbox" id="fx-flash-enable"> 💥 Climax Flash</label>
+                    <span id="fx-val-flash" class="effect-badge">60%</span>
+                  </div>
+                  <div class="grid-2col">
+                    <label>Timing:
+                      <select id="fx-flash-timing">
+                        <option value="peak" selected>Climax Peak</option>
+                        <option value="start">At Start (0s)</option>
+                        <option value="custom">Custom</option>
+                      </select>
+                    </label>
+                    <label>Brightness:
+                      <input id="fx-flash-bright" type="range" min="30" max="90" value="60">
+                    </label>
+                  </div>
+                  <div id="fx-flash-custom-row" style="display:none" class="custom-time-row">
+                    <label>Flash at sec: <input type="number" id="fx-flash-start" value="1.0" min="0" step="0.1"></label>
+                  </div>
+                </div>
+
+                <!-- Effect 4: VHS Glitch -->
+                <div class="effect-card">
+                  <div class="effect-head">
+                    <label class="effect-toggle"><input type="checkbox" id="fx-glitch-enable"> 📼 VHS Glitch</label>
+                    <span id="fx-val-glitch" class="effect-badge">Subtle</span>
+                  </div>
+                  <div class="grid-2col">
+                    <label>Timing:
+                      <select id="fx-glitch-timing">
+                        <option value="always" selected>Entire Clip</option>
+                        <option value="hook">Hook Only</option>
+                        <option value="peak">Peak Only</option>
+                        <option value="custom">Custom</option>
+                      </select>
+                    </label>
+                    <label>Intensity:
+                      <select id="fx-glitch-intensity">
+                        <option value="subtle" selected>Scanlines</option>
+                        <option value="heavy">Heavy VHS</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div id="fx-glitch-custom-row" style="display:none" class="grid-2col custom-time-row">
+                    <label>Start: <input type="number" id="fx-glitch-start" value="0.0" min="0" step="0.1"></label>
+                    <label>End: <input type="number" id="fx-glitch-end" value="2.0" min="0" step="0.1"></label>
+                  </div>
+                </div>
+
+                <!-- Effect 5: Color LUT Preset -->
+                <div class="effect-card">
+                  <div class="effect-head">
+                    <label class="effect-toggle"><input type="checkbox" id="fx-color-enable"> 🎨 Cinema LUT</label>
+                    <span id="fx-val-color" class="effect-badge">Teal/Orange</span>
+                  </div>
+                  <label>Look:
+                    <select id="fx-color-preset">
+                      <option value="teal_orange" selected>🎬 Teal &amp; Orange</option>
+                      <option value="cyberpunk">🌆 Cyberpunk Neon</option>
+                      <option value="warm_sunset">🌅 Warm Sunset</option>
+                      <option value="bw_noir">🖤 B&amp;W Noir</option>
+                      <option value="vibrant_pop">⚡ Vibrant Pop</option>
+                    </select>
+                  </label>
+                </div>
+
+                <!-- Effect 6: Vignette -->
+                <div class="effect-card">
+                  <div class="effect-head">
+                    <label class="effect-toggle"><input type="checkbox" id="fx-vignette-enable"> 🌑 Vignette</label>
+                    <span id="fx-val-vignette" class="effect-badge">75%</span>
+                  </div>
+                  <label>Dark Edge:
+                    <input id="fx-vignette-strength" type="range" min="40" max="110" value="75">
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB: AUDIO & MEME SFX -->
+            <div class="dock-tab-content" id="tab-inspector-audio">
+              <div class="panel-section-title">
+                <span>MEME SOUND EFFECTS (SFX)</span>
+                <div style="display:flex;gap:4px">
+                  <button type="button" id="sfx-preview-btn" class="chip btn-xs">▶ Play</button>
+                  <label class="chip btn-xs">+ Audio <input type="file" id="sfx-upload-input" accept="audio/*" style="display:none"></label>
+                </div>
+              </div>
+
+              <div class="sfx-panel">
+                <div class="grid-2col">
+                  <label style="grid-column:1/-1">Sound Effect:
+                    <select id="sfx-select">
+                      <option value="none">None (No SFX)</option>
+                      <option value="vine_boom" selected>💥 Vine Boom Bass</option>
+                      <option value="whoosh">💨 Whoosh Transition</option>
+                      <option value="ding">🔔 Ding / Bell Chime</option>
+                      <option value="punch">🥊 Punch / Slap</option>
+                      <option value="bruh">🗿 Bruh Sound</option>
+                      <option value="fail">🎺 Fail Horn</option>
+                      <option value="record_scratch">🛑 Record Scratch</option>
+                    </select>
+                  </label>
+                  <label>Hit Timing:
+                    <select id="sfx-time">
+                      <option value="hook" selected>Hook (~0.8s)</option>
+                      <option value="start">At Start (0.1s)</option>
+                      <option value="peak">Peak / Climax</option>
+                    </select>
+                  </label>
+                  <label>Volume: <span id="sfx-val-vol" class="slider-val">75%</span>
+                    <input id="sfx-volume" type="range" min="10" max="150" value="75">
+                  </label>
+                </div>
+                <div id="sfx-status" class="muted" style="margin-top:6px;font-size:11px"></div>
+
+                <div class="nle-group-box" style="margin-top:12px">
+                  <label>Quick Make SFX Preset:
+                    <select id="make-sfx">
+                      <option value="none" selected>None</option>
+                      <option value="vine_boom">💥 Vine Boom</option>
+                      <option value="whoosh">💨 Whoosh</option>
+                      <option value="ding">🔔 Ding</option>
+                      <option value="punch">🥊 Punch</option>
+                      <option value="bruh">🗿 Bruh</option>
+                      <option value="fail">🎺 Fail</option>
+                      <option value="record_scratch">🛑 Record Scratch</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB: STYLE & OUTPUT TEMPLATES -->
+            <div class="dock-tab-content" id="tab-inspector-style">
+              <div class="panel-section-title">
+                <span>RENDER SETTINGS</span>
+              </div>
+              <div class="grid-2col">
+                <label>Resolution:
+                  <select id="resolution">
+                    <option value="720">720p</option>
+                    <option value="1080" selected>1080p</option>
+                    <option value="2160">2160 · 4K</option>
+                  </select>
+                </label>
+                <label>Frame Rate:
+                  <select id="fps">
+                    <option value="0" selected>Keep Original</option>
+                    <option value="24">24 fps</option>
+                    <option value="30">30 fps</option>
+                    <option value="60">60 fps</option>
+                  </select>
+                </label>
+                <label style="grid-column:1/-1">Accuracy:
+                  <select id="accurate">
+                    <option value="fast" selected>YouTube Captions</option>
+                    <option value="best">Whisper large-v3</option>
+                  </select>
+                </label>
+              </div>
+
+              <!-- Style Panel -->
+              <div id="style-panel" class="nle-subpanel" style="margin-top:14px">
+                <div class="panel-section-title">
+                  <span>POST CARD BRANDING</span>
+                </div>
+                <div class="grid-2col">
+                  <label style="grid-column:1/-1">Template:
+                    <select id="st-template">
+                      <option value="none" selected>None (Clean Video)</option>
+                      <option value="x_light">X post · light</option>
+                      <option value="x_dark">X post · dark</option>
+                      <option value="tiktok_hook">TikTok hook</option>
+                      <option value="breaking_news">Breaking news</option>
+                    </select>
+                  </label>
+                  <label>Card Name: <input id="st-tpl-name" type="text" maxlength="28" placeholder="Your Name"></label>
+                  <label>@Handle: <input id="st-tpl-handle" type="text" maxlength="28" placeholder="yourhandle"></label>
+                  <label>Background:
+                    <select id="st-bg-mode">
+                      <option value="none">None</option>
+                      <option value="blur">Blurred copy</option>
+                      <option value="color">Colour</option>
+                      <option value="gradient">Gradient</option>
+                      <option value="image">My image</option>
+                    </select>
+                  </label>
+                  <label>Color 1: <input id="st-bg-color" type="color" value="#0b0912"></label>
+                  <label>Color 2: <input id="st-bg-color2" type="color" value="#ff4ba5"></label>
+                  <label>Padding: <output id="st-padding-o">0</output>%
+                    <input id="st-padding" type="range" min="0" max="25" value="0">
+                  </label>
+                  <label>Corners: <output id="st-radius-o">0</output>
+                    <input id="st-radius" type="range" min="0" max="80" value="0">
+                  </label>
+                  <label>Dim: <output id="st-dim-o">25</output>%
+                    <input id="st-bg-dim" type="range" min="0" max="90" value="25">
+                  </label>
+                </div>
+                <div class="controls" style="margin-top:6px">
+                  <label class="upload-btn">↑ BG Image <input id="st-bg-file" type="file" accept="image/*" hidden></label>
+                  <span class="muted" id="st-bg-name" style="font-size:10px"></span>
+                </div>
+
+                <!-- Watermark & Outro -->
+                <div class="grid-2col" style="margin-top:10px">
+                  <label class="upload-btn">↑ Logo / Watermark <input id="st-wm-file" type="file" accept="image/*" hidden></label>
+                  <span class="muted" id="st-wm-name" style="font-size:10px">no logo</span>
+                  <label>Position:
+                    <select id="st-wm-pos">
+                      <option value="tr">Top-right</option>
+                      <option value="tl">Top-left</option>
+                      <option value="br">Bottom-right</option>
+                      <option value="bl">Bottom-left</option>
+                    </select>
+                  </label>
+                  <label>Size: <output id="st-wm-size-o">16</output>%
+                    <input id="st-wm-size" type="range" min="5" max="40" value="16">
+                  </label>
+                  <label>Opacity: <output id="st-wm-op-o">85</output>%
+                    <input id="st-wm-opacity" type="range" min="10" max="100" value="85">
+                  </label>
+                </div>
+
+                <div class="grid-2col" style="margin-top:10px">
+                  <label>Credit Line: <input id="st-credit" type="text" maxlength="60" placeholder="Clip: Channel"></label>
+                  <label class="toggle-sm" style="align-self:end"><input id="st-credit-auto" type="checkbox"> Auto-Channel</label>
+                  <label>Outro Ribbon: <input id="st-outro" type="text" maxlength="40" placeholder="FOLLOW @handle"></label>
+                  <label>Outro (s): <input id="st-outro-sec" type="number" min="1.5" max="8" step=".5" value="3"></label>
+                </div>
+
+                <div class="grid-2col" style="margin-top:10px">
+                  <label class="upload-btn">↑ Music <input id="st-music-file" type="file" accept="audio/*" hidden></label>
+                  <span class="muted" id="st-music-name" style="font-size:10px">no music</span>
+                  <label>Volume: <output id="st-mv-o">15</output>%
+                    <input id="st-music-vol" type="range" min="0" max="100" value="15">
+                  </label>
+                  <label>Peak Vol: <output id="st-mp-o">85</output>%
+                    <input id="st-music-peak" type="range" min="0" max="100" value="85">
+                  </label>
+                  <label>Riser (s): <input id="st-music-riser" type="number" min="1" max="15" step="1" value="4"></label>
+                </div>
+
+                <button class="secondary btn-sm" id="st-reset" style="margin-top:10px;width:100%">↺ Reset Style Options</button>
+              </div>
+
+              <!-- Re-edit Saved Clips -->
+              <div id="saved-edit" class="nle-subpanel" hidden style="margin-top:14px">
+                <div class="panel-section-title">
+                  <span>RE-EDIT SAVED CLIPS</span>
+                </div>
+                <div id="edit-layouts" class="layout-grid"></div>
+                <label style="margin-top:6px">Speaker Size:
+                  <input id="edit-top" type="range" min="20" max="50" value="32">
+                </label>
+                <div class="controls" style="margin-top:10px">
+                  <button class="primary btn-sm" id="apply-video">Apply to All Clips</button>
+                  <button class="secondary btn-sm" id="apply-one">Only This Clip</button>
+                  <button class="btn-sm" id="download-bundle">Download ZIP</button>
+                  <a id="bundle-link" hidden download>Download ZIP</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+      <!-- =====================================================================
+           FULL-WIDTH HORIZONTAL RESIZER SPLITTER (CAPCUT STYLE)
+           ===================================================================== -->
+      <div class="nle-resizer-h timeline-splitter capcut-h-splitter" id="timeline-splitter" title="Drag up or down to resize timeline · Double click for 50/50 split">
+        <span class="resizer-handle-pill">••••• Drag up / down to resize timeline (Bottom Half) •••••</span>
+      </div>
+
+      <!-- =====================================================================
+           BOTTOM SECTION: FULL-WIDTH MULTI-TRACK CAPCUT TIMELINE
+           ===================================================================== -->
+      <section class="capcut-timeline-deck nle-timeline-deck" id="nle-timeline-deck">
+        
+        <!-- CapCut Timeline Toolbar -->
+        <div class="capcut-timeline-toolbar">
+          <div class="tb-left">
+            <button type="button" class="tb-icon-btn" id="t-btn-undo" title="Undo (Ctrl+Z)">↩</button>
+            <button type="button" class="tb-icon-btn" id="t-btn-redo" title="Redo (Ctrl+Y)">↪</button>
+            <div class="tb-sep"></div>
+            <button type="button" class="tb-icon-btn" id="t-btn-mic" title="Voiceover Record">🎤</button>
+            <button type="button" class="tb-icon-btn tb-srt-btn" id="t-btn-srt" title="Auto Captions (Whisper SRT)">[SRT]</button>
+            <div class="tb-sep"></div>
+            <button type="button" class="tb-icon-btn" id="t-btn-split-tool" title="Split Tool (Blade)">✂</button>
+          </div>
+
+          <div class="tb-center">
+            <div class="transport-range-box capcut-range-box">
+              <label>In (s): <input id="start" type="number" value="0" min="0" step=".1"></label>
+              <label>Out (s): <input id="end" type="number" value="30" min="0" step=".1"></label>
+              <div class="duration-pill">Dur: <strong id="nle-tc-dur-copy">30.0s</strong></div>
+            </div>
+          </div>
+
+          <div class="tb-right">
+            <button type="button" class="tb-icon-btn active" id="tb-snapping" title="Snapping / Magnet">🧲</button>
+            <button type="button" class="tb-icon-btn" id="tb-link" title="Linked Selection">🔗</button>
+            <div class="tb-sep"></div>
+            <div class="timeline-zoom-control">
+              <span class="zoom-label">🔍-</span>
+              <input type="range" id="timeline-zoom" min="50" max="200" value="100" title="Zoom Timeline">
+              <span class="zoom-label">🔍+</span>
+            </div>
+            <div class="tb-sep"></div>
+            <button type="button" class="tb-pill-btn" id="split-50-btn" title="Snap 50/50 Split">↕ 50/50 Split</button>
+            <button type="button" class="tb-icon-btn" id="toggle-timeline-btn" title="Toggle Timeline on/off">⏱</button>
+          </div>
+        </div>
+
+        <!-- CapCut Timeline Workspace -->
+        <div class="capcut-timeline-workspace">
+          <!-- Left Track Headers Column -->
+          <div class="capcut-track-headers-col">
+            <div class="ruler-spacer"></div>
+            <div class="th-cell th-v2" title="Facecam Overlay Track">
+              <span class="th-icon">👁️+</span>
+              <span class="th-name">V2 Facecam</span>
+            </div>
+            <div class="th-cell th-v1" title="Primary Video Track">
+              <span class="th-icon">🎞️+</span>
+              <span class="th-name">V1 Gameplay</span>
+            </div>
+            <div class="th-cell th-t1" title="Captions / Subtitles Track">
+              <span class="th-icon">T+</span>
+              <span class="th-name">T1 Captions</span>
+            </div>
+            <div class="th-cell th-a1" title="Audio / SFX Track">
+              <span class="th-icon">♫+</span>
+              <span class="th-name">A1 Audio</span>
+            </div>
+            <div class="th-cell th-cover" title="Video Thumbnail Cover">
+              <button type="button" class="th-cover-pill">Cover</button>
+              <span class="th-mute-icon" title="Mute/Solo Audio">🔊</span>
+            </div>
+          </div>
+
+          <!-- Main Tracks Container & Ruler -->
+          <div class="capcut-tracks-area">
+            <!-- Timeline Time Ruler -->
+            <div class="nle-timeline-ruler" id="nle-timeline-ruler">
+              <div class="ruler-ticks" id="nle-ruler-ticks"></div>
+              <!-- CapCut Scissor Playhead -->
+              <div class="nle-playhead" id="nle-playhead">
+                <div class="playhead-head"></div>
+                <div class="playhead-line"></div>
+                <div class="playhead-scissor-badge" title="CapCut Scissor Needle">✂</div>
+              </div>
+            </div>
+
+            <!-- Track Lanes Deck -->
+            <div class="nle-tracks-container" id="nle-tracks-container">
+              <!-- V2: Facecam Overlay Track -->
+              <div class="nle-track track-v2">
+                <div class="track-header" style="display:none">
+                  <span class="track-id id-v2">V2</span>
+                  <span class="track-name">Facecam</span>
+                </div>
+                <div class="track-lane">
+                  <div class="timeline-clip clip-v2" id="clip-bar-v2">
+                    <span class="clip-text">Facecam Crop Box (Upper)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- V1: Gameplay Video Track -->
+              <div class="nle-track track-v1">
+                <div class="track-header" style="display:none">
+                  <span class="track-id id-v1">V1</span>
+                  <span class="track-name">Gameplay</span>
+                </div>
+                <div class="track-lane">
+                  <div class="timeline-clip clip-v1" id="clip-bar-v1">
+                    <span class="clip-text">Primary Gameplay Source</span>
+                  </div>
+                  <div class="timeline-empty-message">Drag material here and start to create</div>
+                </div>
+              </div>
+
+              <!-- T1: Captions / Subtitles Track -->
+              <div class="nle-track track-t1">
+                <div class="track-header" style="display:none">
+                  <span class="track-id id-t1">T1</span>
+                  <span class="track-name">Captions</span>
+                </div>
+                <div class="track-lane">
+                  <div class="timeline-clip clip-t1" id="clip-bar-t1">
+                    <span class="clip-text" id="timeline-sub-text">GTA Neon Captions</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- A1: Audio & Meme SFX Track -->
+              <div class="nle-track track-a1">
+                <div class="track-header" style="display:none">
+                  <span class="track-id id-a1">A1</span>
+                  <span class="track-name">Audio/SFX</span>
+                </div>
+                <div class="track-lane">
+                  <div class="timeline-clip clip-a1" id="clip-bar-a1">
+                    <span class="clip-text">Audio Dialogue + Waveform</span>
+                    <div class="timeline-sfx-point" id="timeline-sfx-point" title="SFX Hit (0.8s)">💥 SFX</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- =====================================================================
+           BOTTOM RENDER / EXPORT BAR
+           ===================================================================== -->
+      <footer class="export-bar capcut-export-dock">
+        <div class="render-status-console">
+          <span class="engine-indicator-led"></span>
+          <div class="status-texts">
+            <b id="status" role="status">Engine Ready</b>
+            <p id="detail">Exports process locally and save to your project library.</p>
+          </div>
+        </div>
+
+        <div class="render-progress-area">
+          <div class="progress-track" hidden id="progress-wrap"><div id="progress"></div></div>
+        </div>
+
+        <div class="render-actions-group">
+          <button id="batch" class="secondary dock-render-btn">✦ Batch Highlights</button>
+          <button class="primary dock-render-btn" id="export">⚡ Render Clip ↗</button>
+          <a id="download" class="download-pill" hidden download="neoncut-clip.mp4">↓ MP4</a>
+          <a id="srt" class="download-pill" hidden>↓ SRT</a>
+          <a id="vtt" class="download-pill" hidden>↓ VTT</a>
+        </div>
+      </footer>
+
+    </main>
+
+    <!-- VIEW 2: PROJECT MEDIA LIBRARY (MY CLIPS GALLERY) -->
+    <section class="nle-library-container" id="library-view" hidden>
+      <div class="library-top-bar">
+        <div>
+          <h2>PROJECT DELIVERIES <em>· MY CLIPS</em></h2>
+          <p class="muted">All finished vertical renders are preserved in your local studio folder.</p>
+        </div>
+        <button id="refresh-library" class="primary">↻ Refresh Media Pool</button>
+      </div>
+      <div id="library" class="library-grid nle-library-grid"></div>
+    </section>
+
+  </div>
+
+  <!-- CORE APPLICATION LOGIC SCRIPTS -->
+  <script src="/assets/app.js?v=20261122-nle1"></script>
+  <script src="/assets/extras.js?v=20261122-nle1"></script>
+  <script src="/assets/transcripts.js?v=20261122-nle1"></script>
+  <script src="/assets/vision.js?v=20261122-nle1"></script>
+  <script src="/assets/report.js?v=20261122-nle1"></script>
+
+  <!-- CAPCUT WORKSPACE CONTROLLER SCRIPT -->
+  <script>
+  (function initCapCutStudio(){
+    // 1. Sync header buttons to action triggers
+    const topMake = document.getElementById('top-make');
+    const topExport = document.getElementById('top-export');
+    const makeBtn = document.getElementById('make');
+    const exportBtn = document.getElementById('export');
+    if(topMake && makeBtn) topMake.onclick = () => makeBtn.click();
+    if(topExport && exportBtn) topExport.onclick = () => exportBtn.click();
+
+    // 2. Info drawer toggle
+    const infoBtn = document.getElementById('info-toggle-btn');
+    const drawer = document.getElementById('nle-drawer-bar');
+    if(infoBtn && drawer){
+      infoBtn.onclick = () => drawer.hidden = !drawer.hidden;
+    }
+
+    // 3. Media tabs switcher (Left Dock)
+    document.querySelectorAll('[data-bintab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-bintab]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.dataset.bintab;
+        document.querySelectorAll('#dock-left .dock-tab-content').forEach(c => c.classList.remove('active'));
+        const target = document.getElementById('tab-bin-' + tab);
+        if(target) target.classList.add('active');
+      });
+    });
+
+    // 4. Inspector tabs switcher (Right Dock)
+    document.querySelectorAll('[data-inspectortab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-inspectortab]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.dataset.inspectortab;
+        document.querySelectorAll('#dock-right .dock-tab-content').forEach(c => c.classList.remove('active'));
+        const target = document.getElementById('tab-inspector-' + tab);
+        if(target) target.classList.add('active');
+      });
+    });
+
+    // 5. Workspace switcher (Edit Studio vs My Clips)
+    const editorView = document.getElementById('editor-view');
+    const libraryView = document.getElementById('library-view');
+    document.querySelectorAll('[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const view = btn.dataset.view;
+        if(view === 'library'){
+          if(editorView) editorView.hidden = true;
+          if(libraryView) libraryView.hidden = false;
+          document.getElementById('refresh-library')?.click();
+        } else {
+          if(editorView) editorView.hidden = false;
+          if(libraryView) libraryView.hidden = true;
+        }
+      });
+    });
+
+    // 6. Center Player View Modes (Dual / Source Crop / 9:16 Program)
+    const btnViewDual = document.getElementById('btn-view-dual');
+    const btnViewSrc = document.getElementById('btn-view-src');
+    const btnViewProg = document.getElementById('btn-view-prog');
+    const srcBox = document.getElementById('source-monitor-box');
+    const progBox = document.getElementById('preview-side');
+    const vSplitter = document.getElementById('mon-v-splitter');
+
+    function setPlayerViewMode(mode) {
+      [btnViewDual, btnViewSrc, btnViewProg].forEach(b => b?.classList.remove('active'));
+      if (mode === 'source') {
+        btnViewSrc?.classList.add('active');
+        if (srcBox) { srcBox.style.display = 'flex'; srcBox.style.flex = '1 1 0'; }
+        if (progBox) progBox.style.display = 'none';
+        if (vSplitter) vSplitter.style.display = 'none';
+      } else if (mode === 'program') {
+        btnViewProg?.classList.add('active');
+        if (srcBox) srcBox.style.display = 'none';
+        if (progBox) { progBox.style.display = 'flex'; progBox.style.width = '100%'; progBox.style.flex = '1 1 0'; }
+        if (vSplitter) vSplitter.style.display = 'none';
+      } else {
+        btnViewDual?.classList.add('active');
+        if (srcBox) { srcBox.style.display = 'flex'; srcBox.style.flex = '1 1 0'; }
+        if (progBox) { progBox.style.display = 'flex'; progBox.style.flex = '0 0 auto'; }
+        if (vSplitter) vSplitter.style.display = 'flex';
+      }
+      window.dispatchEvent(new Event('resize'));
+    }
+
+    btnViewDual?.addEventListener('click', () => setPlayerViewMode('dual'));
+    btnViewSrc?.addEventListener('click', () => setPlayerViewMode('source'));
+    btnViewProg?.addEventListener('click', () => setPlayerViewMode('program'));
+
+    // 7. Timecode sync & Scrubbing
+    const video = document.getElementById('video');
+    const tcDisplay = document.getElementById('nle-tc-display');
+    const tcDur = document.getElementById('nle-tc-dur');
+    const tcDurCopy = document.getElementById('nle-tc-dur-copy');
+    const playhead = document.getElementById('nle-playhead');
+    const ruler = document.getElementById('nle-timeline-ruler');
+    const startIn = document.getElementById('start');
+    const endIn = document.getElementById('end');
+
+    function formatTimecode(sec) {
+      if(isNaN(sec) || sec < 0) sec = 0;
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      const ms = Math.floor((sec % 1) * 10);
+      return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${ms}`;
+    }
+
+    if (video) {
+      video.addEventListener('timeupdate', () => {
+        if(tcDisplay) tcDisplay.textContent = formatTimecode(video.currentTime);
+        if(video.duration && playhead && ruler){
+          const pct = Math.max(0, Math.min(100, (video.currentTime / video.duration) * 100));
+          playhead.style.left = pct + '%';
+        }
+      });
+      video.addEventListener('durationchange', () => {
+        if(tcDur) tcDur.textContent = formatTimecode(video.duration);
+        if(tcDurCopy) tcDurCopy.textContent = formatTimecode(video.duration);
+      });
+    }
+
+    // Transport buttons
+    document.getElementById('t-btn-play')?.addEventListener('click', () => {
+      if(!video) return;
+      if(video.paused) video.play();
+      else video.pause();
+    });
+    document.getElementById('t-btn-start')?.addEventListener('click', () => {
+      if(video) video.currentTime = Number(startIn?.value || 0);
+    });
+    document.getElementById('t-btn-end')?.addEventListener('click', () => {
+      if(video && endIn?.value) video.currentTime = Number(endIn.value);
+    });
+    document.getElementById('t-btn-step-b')?.addEventListener('click', () => {
+      if(video) video.currentTime = Math.max(0, video.currentTime - 1);
+    });
+    document.getElementById('t-btn-step-f')?.addEventListener('click', () => {
+      if(video) video.currentTime = Math.min(video.duration || 9999, video.currentTime + 1);
+    });
+    document.getElementById('t-btn-mark-in')?.addEventListener('click', () => {
+      if(video && startIn) {
+        startIn.value = video.currentTime.toFixed(1);
+        startIn.dispatchEvent(new Event('change'));
+      }
+    });
+    document.getElementById('t-btn-mark-out')?.addEventListener('click', () => {
+      if(video && endIn) {
+        endIn.value = video.currentTime.toFixed(1);
+        endIn.dispatchEvent(new Event('change'));
+      }
+    });
+
+    // Timeline Scrubber Click & Drag
+    let isScrubbing = false;
+    function scrubTimeline(e) {
+      if (!ruler || !video || !video.duration) return;
+      const rect = ruler.getBoundingClientRect();
+      const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+      const pct = x / rect.width;
+      video.currentTime = pct * video.duration;
+    }
+    ruler?.addEventListener('mousedown', e => {
+      isScrubbing = true;
+      scrubTimeline(e);
+    });
+    window.addEventListener('mousemove', e => {
+      if(isScrubbing) scrubTimeline(e);
+    });
+    window.addEventListener('mouseup', () => {
+      isScrubbing = false;
+    });
+
+    // 8. CapCut Timeline Resizer & 50/50 Bottom Split
+    const timelineDeck = document.getElementById('nle-timeline-deck');
+    const hSplitter = document.getElementById('timeline-splitter');
+    const split50Btn = document.getElementById('split-50-btn');
+    const toggleTimelineBtn = document.getElementById('toggle-timeline-btn');
+    const topDocks = document.getElementById('capcut-top-section');
+
+    function setTimelineHeight(h, save = true) {
+      if (!timelineDeck) return;
+      const totalH = window.innerHeight - 80;
+      const maxH = Math.max(160, Math.round(totalH * 0.75));
+      h = Math.max(110, Math.min(maxH, Math.round(h)));
+
+      document.documentElement.style.setProperty('--timeline-height', h + 'px');
+      timelineDeck.style.height = h + 'px';
+
+      if (save) {
+        try { localStorage.setItem('neonclipping_timeline_height', h); } catch(e){}
+      }
+      window.dispatchEvent(new Event('resize'));
+    }
+
+    function set5050Split(save = true) {
+      const availH = window.innerHeight - 80; // app header + toolbar
+      const targetH = Math.max(220, Math.round(availH * 0.46));
+      setTimelineHeight(targetH, save);
+    }
+
+    // Default initialization: give timeline bottom half of the screen
+    const savedTimelineH = localStorage.getItem('neonclipping_timeline_height');
+    if (savedTimelineH && Number(savedTimelineH) >= 110) {
+      setTimelineHeight(Number(savedTimelineH), false);
+    } else {
+      set5050Split(false);
+    }
+
+    // Drag Up / Down Splitter
+    if (hSplitter && timelineDeck) {
+      let isDraggingH = false;
+      let startY = 0, startH = 340;
+
+      hSplitter.addEventListener('mousedown', e => {
+        isDraggingH = true;
+        startY = e.clientY;
+        startH = timelineDeck.getBoundingClientRect().height;
+        document.body.style.cursor = 'row-resize';
+        hSplitter.classList.add('dragging');
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', e => {
+        if (!isDraggingH) return;
+        // Dragging UP gives positive dy -> timeline expands
+        const dy = startY - e.clientY;
+        setTimelineHeight(startH + dy);
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDraggingH) {
+          isDraggingH = false;
+          document.body.style.cursor = '';
+          hSplitter.classList.remove('dragging');
+        }
+      });
+
+      hSplitter.addEventListener('dblclick', () => {
+        set5050Split(true);
+      });
+    }
+
+    // 50/50 Split Snap Button
+    split50Btn?.addEventListener('click', () => {
+      if (timelineDeck && timelineDeck.classList.contains('collapsed')) {
+        timelineDeck.classList.remove('collapsed');
+        if (toggleTimelineBtn) toggleTimelineBtn.classList.remove('active');
+      }
+      set5050Split(true);
+    });
+
+    // Toggle Timeline on/off
+    toggleTimelineBtn?.addEventListener('click', () => {
+      if (!timelineDeck) return;
+      const isCollapsed = timelineDeck.classList.toggle('collapsed');
+      toggleTimelineBtn.classList.toggle('active', isCollapsed);
+      if (!isCollapsed) {
+        set5050Split(true);
+      }
+      window.dispatchEvent(new Event('resize'));
+    });
+
+    // Program monitor width splitter
+    if (vSplitter && progBox) {
+      let isDraggingV = false;
+      let startX = 0, startW = 300;
+
+      function setProgWidth(w, save = true) {
+        w = Math.max(180, Math.min(800, Math.round(w)));
+        if(progBox) progBox.style.width = w + 'px';
+        if(save) { try { localStorage.setItem('neonclipping_program_width', w); } catch(e){} }
+        window.dispatchEvent(new Event('resize'));
+      }
+
+      const initW = Number(localStorage.getItem('neonclipping_program_width')) || 300;
+      setProgWidth(initW, false);
+
+      vSplitter.addEventListener('mousedown', e => {
+        isDraggingV = true;
+        startX = e.clientX;
+        startW = progBox.getBoundingClientRect().width;
+        document.body.style.cursor = 'col-resize';
+        vSplitter.classList.add('dragging');
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', e => {
+        if (!isDraggingV) return;
+        const dx = startX - e.clientX;
+        setProgWidth(startW + dx);
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDraggingV) {
+          isDraggingV = false;
+          document.body.style.cursor = '';
+          vSplitter.classList.remove('dragging');
+        }
+      });
+    }
+
+    // Timeline Zoom Slider
+    const zoomSlider = document.getElementById('timeline-zoom');
+    zoomSlider?.addEventListener('input', () => {
+      const val = Number(zoomSlider.value);
+      const tracksDeck = document.getElementById('nle-tracks-container');
+      if (tracksDeck) {
+        tracksDeck.style.width = val > 100 ? `${val}%` : '100%';
+      }
+      if (ruler) {
+        ruler.style.width = val > 100 ? `${val}%` : '100%';
+      }
+    });
+
+    // Shortcut button sync
+    document.getElementById('crop-shortcut-btn')?.addEventListener('click', () => {
+      document.getElementById('cam')?.click();
+    });
+    document.getElementById('safe-shortcut-btn')?.addEventListener('click', () => {
+      const sz = document.getElementById('safe-zones');
+      if(sz){ sz.checked = !sz.checked; sz.dispatchEvent(new Event('change')); }
+    });
+    document.getElementById('fs-shortcut-btn')?.addEventListener('click', () => {
+      document.getElementById('source-expand-btn')?.click();
+    });
+    document.getElementById('t-btn-srt')?.addEventListener('click', () => {
+      document.getElementById('transcribe')?.click();
+    });
+
+  })();
+  </script>
+</body>
+</html>
