@@ -125,54 +125,90 @@
               <div class="capcut-media-inner-layout">
                 <!-- CapCut Sub-Rail -->
                 <div class="capcut-subrail">
-                  <div class="subrail-item active" title="Favorite Items"><span class="sub-ic">⭐</span> Favorite</div>
-                  <div class="subrail-item" title="Default Library"><span class="sub-ic">⊞</span> Default</div>
-                  <div class="subrail-item" id="subrail-library-btn" data-view="library" title="Open My Clips Library"><span class="sub-ic">📁</span> New Library</div>
+                  <div class="subrail-item" id="subrail-fav-btn" data-subpane="fav" title="Favorite Items"><span class="sub-ic">⭐</span> Favorite</div>
+                  <div class="subrail-item active" id="subrail-default-btn" data-subpane="default" title="Default Library"><span class="sub-ic">⊞</span> Default</div>
+                  <div class="subrail-item" id="subrail-library-btn" data-subpane="library" title="Open My Clips Library"><span class="sub-ic">📁</span> New Library</div>
                 </div>
 
                 <!-- CapCut Main Media Area -->
                 <div class="capcut-media-pane">
                   
-                  <!-- Top Action Bar: + Import and Search/Filter Icons -->
-                  <div class="capcut-import-header">
-                    <label class="capcut-import-button" title="Upload video file from computer">
-                      <span class="plus">+</span> Import
-                      <input id="file" type="file" accept="video/*" hidden>
-                    </label>
-                    <div class="capcut-media-tools">
-                      <span class="media-tool-icon" title="Search">🔍</span>
-                      <span class="media-tool-icon" title="Sort">⇅</span>
-                      <span class="media-tool-icon" title="Filter">⑂</span>
+                  <!-- Subpane 1: Default Import Stock -->
+                  <div class="capcut-subpane" id="subpane-default">
+                    <!-- Top Action Bar: + Import and Search/Filter Icons -->
+                    <div class="capcut-import-header">
+                      <label class="capcut-import-button" title="Upload video file from computer">
+                        <span class="plus">+</span> Import
+                        <input id="file" type="file" accept="video/*" hidden>
+                      </label>
+                      <div class="capcut-media-tools">
+                        <span class="media-tool-icon" title="Search">🔍</span>
+                        <span class="media-tool-icon" title="Sort">⇅</span>
+                        <span class="media-tool-icon" title="Filter">⑂</span>
+                      </div>
+                    </div>
+
+                    <!-- Iconic CapCut Dropzone Card -->
+                    <div class="capcut-dropzone-card" id="capcut-dropzone">
+                      <div class="dropzone-arrow-ring">
+                        <span class="dropzone-down-arrow">↓</span>
+                      </div>
+                      <div class="dropzone-title">Import Stock</div>
+                      <div class="dropzone-sub">Drop video file here or paste link below</div>
+
+                      <!-- Embedded Video Link Bar -->
+                      <div class="capcut-url-field-wrap">
+                        <input id="url" type="url" placeholder="Paste link (YouTube, Twitch, Kick)...">
+                        <select id="srcq" title="Download Quality">
+                          <option value="1080" selected>1080p</option>
+                          <option value="2160">4K</option>
+                          <option value="1440">1440p</option>
+                          <option value="720">720p</option>
+                          <option value="480">480p</option>
+                          <option value="360">360p</option>
+                        </select>
+                      </div>
+
+                      <div class="capcut-fetch-actions">
+                        <button class="primary capcut-btn-cyan" id="link">Fetch Preview ↗</button>
+                        <button class="primary make capcut-btn-pink" id="make">⚡ 1-Click Make</button>
+                      </div>
+
+                      <div class="nle-note" id="link-status" role="status">Paste a link or import MP4 to begin editing.</div>
                     </div>
                   </div>
 
-                  <!-- Iconic CapCut Dropzone Card -->
-                  <div class="capcut-dropzone-card" id="capcut-dropzone">
-                    <div class="dropzone-arrow-ring">
-                      <span class="dropzone-down-arrow">↓</span>
+                  <!-- Subpane 2: Favorite Items -->
+                  <div class="capcut-subpane" id="subpane-fav" hidden>
+                    <div class="capcut-import-header">
+                      <span style="font-weight:700;font-size:12px;color:#ff4ba5">⭐ FAVORITE CLIPS</span>
+                      <button class="btn-sm secondary" id="fav-refresh-btn" type="button">↻ Refresh</button>
                     </div>
-                    <div class="dropzone-title">Import Stock</div>
-                    <div class="dropzone-sub">Drop video file here or paste link below</div>
-
-                    <!-- Embedded Video Link Bar -->
-                    <div class="capcut-url-field-wrap">
-                      <input id="url" type="url" placeholder="Paste link (YouTube, Twitch, Kick)...">
-                      <select id="srcq" title="Download Quality">
-                        <option value="1080" selected>1080p</option>
-                        <option value="2160">4K</option>
-                        <option value="1440">1440p</option>
-                        <option value="720">720p</option>
-                        <option value="480">480p</option>
-                        <option value="360">360p</option>
-                      </select>
+                    <div id="fav-clips-grid" class="subpane-clips-grid">
+                      <div class="subpane-empty-card">
+                        <span style="font-size:24px">⭐</span>
+                        <b>No favorite clips yet</b>
+                        <small>Rate clips with 4 or 5 stars in the preview to save them here.</small>
+                      </div>
                     </div>
+                  </div>
 
-                    <div class="capcut-fetch-actions">
-                      <button class="primary capcut-btn-cyan" id="link">Fetch Preview ↗</button>
-                      <button class="primary make capcut-btn-pink" id="make">⚡ 1-Click Make</button>
+                  <!-- Subpane 3: New Library / Clip Collections -->
+                  <div class="capcut-subpane" id="subpane-library" hidden>
+                    <div class="capcut-import-header">
+                      <span style="font-weight:700;font-size:12px;color:#00c2ff">📁 CLIP LIBRARIES</span>
+                      <button class="btn-sm secondary" id="new-folder-btn" type="button">+ New Folder</button>
                     </div>
-
-                    <div class="nle-note" id="link-status" role="status">Paste a link or import MP4 to begin editing.</div>
+                    <div class="library-folder-bar" id="library-folder-bar" style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:4px;">
+                      <button class="chip active folder-chip" data-folder="all">📁 All Renders (<span id="lib-count-all">0</span>)</button>
+                    </div>
+                    <div id="subpane-library-grid" class="subpane-clips-grid">
+                      <div class="subpane-empty-card">
+                        <span style="font-size:24px">🎬</span>
+                        <b>No exported clips yet</b>
+                        <small>Use "1-Click Make" or "Export" to generate clips into your library.</small>
+                      </div>
+                    </div>
                   </div>
 
                 </div>
@@ -1291,6 +1327,216 @@
           if(libraryView) libraryView.hidden = true;
         }
       });
+    });
+
+    // 5b. CapCut Sub-Rail Switcher (Default / Favorite / New Library)
+    const subrailItems = document.querySelectorAll('.capcut-subrail .subrail-item');
+    const subpaneDefault = document.getElementById('subpane-default');
+    const subpaneFav = document.getElementById('subpane-fav');
+    const subpaneLibrary = document.getElementById('subpane-library');
+    const favClipsGrid = document.getElementById('fav-clips-grid');
+    const libClipsGrid = document.getElementById('subpane-library-grid');
+    const favRefreshBtn = document.getElementById('fav-refresh-btn');
+    const newFolderBtn = document.getElementById('new-folder-btn');
+    const folderBar = document.getElementById('library-folder-bar');
+    const libCountAll = document.getElementById('lib-count-all');
+
+    let customFolders = [];
+    try {
+      customFolders = JSON.parse(localStorage.getItem('neonclipping_custom_folders') || '[]');
+    } catch(e) { customFolders = []; }
+    let activeFolder = 'all';
+
+    function renderFolderChips(allClipsCount) {
+      if (!folderBar) return;
+      folderBar.innerHTML = '';
+      
+      const allBtn = document.createElement('button');
+      allBtn.type = 'button';
+      allBtn.className = 'chip folder-chip' + (activeFolder === 'all' ? ' active' : '');
+      allBtn.dataset.folder = 'all';
+      allBtn.innerHTML = `📁 All Renders (<span id="lib-count-all">${allClipsCount}</span>)`;
+      allBtn.onclick = () => {
+        activeFolder = 'all';
+        renderFolderChips(allClipsCount);
+        loadBinClips('library');
+      };
+      folderBar.appendChild(allBtn);
+
+      customFolders.forEach(folderName => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip folder-chip' + (activeFolder === folderName ? ' active' : '');
+        chip.dataset.folder = folderName;
+        chip.textContent = '📂 ' + folderName;
+        chip.onclick = () => {
+          activeFolder = folderName;
+          renderFolderChips(allClipsCount);
+          loadBinClips('library');
+        };
+        folderBar.appendChild(chip);
+      });
+    }
+
+    async function loadBinClips(pane) {
+      try {
+        const clips = (typeof request === 'function') ? await request('/library') : await fetch('/library').then(r=>r.json());
+        if (libCountAll) libCountAll.textContent = clips.length;
+
+        if (pane === 'fav') {
+          if (!favClipsGrid) return;
+          const favs = clips.filter(c => {
+            const featRating = c.settings?.features?.rating;
+            const isFav = c.settings?.favorite === true;
+            const isViral = (c.viral && c.viral >= 75) || (c.score && c.score >= 80);
+            return isFav || (featRating && featRating >= 4) || isViral;
+          });
+
+          if (!favs.length) {
+            favClipsGrid.innerHTML = `
+              <div class="subpane-empty-card">
+                <span style="font-size:24px">⭐</span>
+                <b>No favorite clips yet</b>
+                <small>Clips with high viral score (75+) or 4–5 stars appear here.</small>
+              </div>`;
+            return;
+          }
+          renderClipCards(favClipsGrid, favs);
+        } else if (pane === 'library') {
+          if (!libClipsGrid) return;
+          renderFolderChips(clips.length);
+
+          let displayClips = clips;
+          if (activeFolder !== 'all') {
+            displayClips = clips.filter(c => c.settings?.folder === activeFolder);
+          }
+
+          if (!displayClips.length) {
+            libClipsGrid.innerHTML = `
+              <div class="subpane-empty-card">
+                <span style="font-size:24px">🎬</span>
+                <b>${activeFolder === 'all' ? 'No exported clips yet' : 'No clips in "' + activeFolder + '"'}</b>
+                <small>${activeFolder === 'all' ? 'Use "1-Click Make" or "Export" to generate clips.' : 'Organize clips into this folder from the editor.'}</small>
+              </div>`;
+            return;
+          }
+          renderClipCards(libClipsGrid, displayClips);
+        }
+      } catch(err) {
+        console.error('Error loading bin clips:', err);
+      }
+    }
+
+    function renderClipCards(container, clipList) {
+      container.innerHTML = '';
+      clipList.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'subpane-clip-card';
+        card.dataset.id = c.id;
+
+        const vid = document.createElement('video');
+        vid.src = '/media/' + c.id;
+        vid.preload = 'metadata';
+        vid.muted = true;
+        vid.playsInline = true;
+
+        // Hover-to-preview
+        card.addEventListener('mouseenter', () => {
+          vid.play().catch(()=>{});
+        });
+        card.addEventListener('mouseleave', () => {
+          vid.pause();
+          vid.currentTime = 0;
+        });
+
+        const info = document.createElement('div');
+        info.className = 'clip-info';
+
+        const title = document.createElement('span');
+        title.className = 'clip-title';
+        title.title = c.title || 'Clip ' + c.id.slice(0,6);
+        title.textContent = c.title || 'Clip ' + c.id.slice(0,6);
+
+        const sub = document.createElement('span');
+        sub.className = 'clip-sub';
+        const dur = (c.meta?.duration || 0).toFixed(1);
+        sub.textContent = `${dur}s · ${c.settings?.layout || '9:16'}`;
+
+        const actions = document.createElement('div');
+        actions.className = 'clip-actions';
+
+        const dl = document.createElement('a');
+        dl.className = 'btn-sm primary';
+        dl.style.textDecoration = 'none';
+        dl.href = '/media/' + c.id;
+        dl.download = 'neonclipping-' + c.id + '.mp4';
+        dl.textContent = '↓ MP4';
+
+        const edit = document.createElement('button');
+        edit.className = 'btn-sm secondary';
+        edit.type = 'button';
+        edit.textContent = 'Edit';
+        edit.onclick = (e) => {
+          e.stopPropagation();
+          if (typeof openSavedClip === 'function') openSavedClip(c.id).catch(err => {
+            if (typeof status === 'function') status(err.message);
+          });
+        };
+
+        actions.appendChild(dl);
+        actions.appendChild(edit);
+
+        info.appendChild(title);
+        info.appendChild(sub);
+        info.appendChild(actions);
+
+        card.appendChild(vid);
+        card.appendChild(info);
+
+        card.onclick = (e) => {
+          if (e.target.tagName && (e.target.tagName.toLowerCase() === 'a' || e.target.tagName.toLowerCase() === 'button')) return;
+          if (typeof openSavedClip === 'function') openSavedClip(c.id).catch(err => {
+            if (typeof status === 'function') status(err.message);
+          });
+        };
+
+        container.appendChild(card);
+      });
+    }
+
+    subrailItems.forEach(item => {
+      item.addEventListener('click', () => {
+        subrailItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        const targetPane = item.dataset.subpane;
+        if (subpaneDefault) subpaneDefault.hidden = (targetPane !== 'default');
+        if (subpaneFav) subpaneFav.hidden = (targetPane !== 'fav');
+        if (subpaneLibrary) subpaneLibrary.hidden = (targetPane !== 'library');
+
+        if (targetPane === 'fav') {
+          loadBinClips('fav');
+        } else if (targetPane === 'library') {
+          loadBinClips('library');
+        }
+      });
+    });
+
+    favRefreshBtn?.addEventListener('click', () => loadBinClips('fav'));
+
+    newFolderBtn?.addEventListener('click', () => {
+      const name = prompt('Enter new collection / folder name:');
+      if (name && name.trim()) {
+        const cleanName = name.trim();
+        if (!customFolders.includes(cleanName)) {
+          customFolders.push(cleanName);
+          try {
+            localStorage.setItem('neonclipping_custom_folders', JSON.stringify(customFolders));
+          } catch(e){}
+        }
+        activeFolder = cleanName;
+        loadBinClips('library');
+      }
     });
 
     // 6. Center Player View Modes (Dual / Source Crop / 9:16 Program)

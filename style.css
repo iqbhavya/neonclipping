@@ -2016,6 +2016,93 @@ body.capcut-app-body {
   overflow-y: auto;
 }
 
+.capcut-subpane {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.subpane-clips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  overflow-y: auto;
+  max-height: 290px;
+  padding: 4px 2px;
+}
+
+.subpane-clip-card {
+  background: #191b22;
+  border: 1px solid #2b2e3a;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.subpane-clip-card:hover {
+  border-color: #00c2ff;
+  transform: translateY(-2px);
+}
+
+.subpane-clip-card video {
+  width: 100%;
+  aspect-ratio: 9/16;
+  max-height: 140px;
+  background: #000;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.subpane-clip-card .clip-info {
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.subpane-clip-card .clip-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subpane-clip-card .clip-sub {
+  font-size: 10px;
+  color: #8a8e9e;
+}
+
+.subpane-clip-card .clip-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.subpane-clip-card .clip-actions a,
+.subpane-clip-card .clip-actions button {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.subpane-empty-card {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 28px 12px;
+  background: #14151a;
+  border: 1px dashed #282a35;
+  border-radius: 8px;
+  color: #7b8092;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
 .capcut-import-header {
   display: flex;
   justify-content: space-between;
